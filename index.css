@@ -1,6 +1,6 @@
 /* General styles */ 
 body {
-    background-color: #808080;
+    background-color: #505050;
     color: white;
     font-family: Arial, sans-serif;
     margin: 0;
@@ -20,6 +20,7 @@ body {
 /* Title styling */
 h2 {
     font-size: 24px;
+    margin-top: 80px;
     margin-bottom: 20px;
     color: white;
     text-transform: uppercase;
@@ -51,27 +52,27 @@ button:active {
     transform: scale(0.98);
 }
 
-/* Upload Shop Button */
-.upload-shop-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 15px; /* Matches other button sizes */
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s, transform 0.2s;
-    width: auto; /* Ensures it doesn't stretch across */
-}
+/* Mobile-specific adjustments */
+@media only screen and (max-width: 600px) {
+    body {
+        flex-direction: column;
+        padding: 10px;
+    }
 
-.upload-shop-button:hover {
-    background-color: #45a049;
-}
+    .container {
+        width: 90%; /* Adjust the container to fit the screen better */
+        max-width: 300px; /* Limit the maximum width */
+    }
 
-.upload-shop-button:active {
-    background-color: #3e8e41;
+    h2 {
+        font-size: 20px; /* Slightly smaller title font for mobile */
+        margin-top: 0px;
+    }
+
+    button {
+        font-size: 14px; /* Reduce button font size for smaller screens */
+        padding: 8px 10px; /* Reduce button padding */
+        width: 100%; /* Ensure buttons remain responsive */
+        margin: 8px 0; /* Slightly smaller margin */
+    }
 }

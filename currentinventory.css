@@ -6,8 +6,6 @@ body {
     margin: 0;
 }
 
-
-
 /* Navbar styling */
 .navbar {
     display: flex;
@@ -15,14 +13,20 @@ body {
     background-color: #505050;
     padding: 10px 0;
     border-bottom: 2px solid black;
+    margin: 0;
+    box-sizing: border-box;
 }
 
 .navbar a {
     color: white;
     text-decoration: none;
     padding: 10px 20px;
-    margin: 0 10px;
+    margin: 0;
     border-right: 1px solid black;
+    box-sizing: border-box;
+    display: flex; /* Align content inside */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
 }
 
 .navbar a:last-child {
@@ -33,7 +37,6 @@ body {
     background-color: #505050;
     border-radius: 5px;
 }
-
 /* Inventory container */
 
 /* Table styling */
@@ -67,22 +70,53 @@ td {
     font-size: 16px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    table {
-        font-size: 14px;
-    }
-
-    th, td {
-        padding: 10px;
+@media only screen and (max-width: 600px) {
+    .navbar {
+        flex-wrap: wrap;
     }
 
     .navbar a {
-        padding: 8px 15px;
-        font-size: 14px;
+        flex: 1 1 50%;
+        text-align: center;
+        border-right: none; /* Remove right borders in mobile view */
     }
 
-    header {
-        font-size: 20px;
+    .navbar a:nth-child(odd) {
+        border-right: 1px solid black; /* Add right border for the first column only */
+    }
+
+    .button-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 2 buttons per row */
+        gap: 10px;
+        max-width: 300px;
+        margin: 20px auto;
+    }
+
+    .button-grid a {
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        background-color: #505050;
+        color: white;
+        border: 1px solid black;
+        text-decoration: none;
+
+        /* Fix uneven spacing */
+        display: flex; /* Align content inside */
+        align-items: center; /* Center vertically */
+        justify-content: center; /* Center horizontally */
+    }
+
+    /* Add bottom border explicitly for the first row (top buttons) */
+    .button-grid a:nth-child(1),
+    .button-grid a:nth-child(2) {
+        border-bottom: 2px solid black; /* Ensure a visible black bottom border */
+    }
+
+    /* Ensure no bottom border for the bottom row buttons */
+    .button-grid a:nth-child(3),
+    .button-grid a:nth-child(4) {
+        border-bottom: none !important; /* Use !important to override potential conflicts */
     }
 }

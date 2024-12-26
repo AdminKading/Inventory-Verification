@@ -23,6 +23,7 @@ document.querySelectorAll('.container button').forEach(button => {
 
                 console.log('Excel Data:', jsonData);
 
+
                 // Save the data to localStorage and redirect
                 localStorage.setItem('excelData', JSON.stringify(jsonData));
                 window.location.href = 'home.html';
