@@ -70,7 +70,7 @@ button:active {
 
     h2 {
         font-size: 20px; /* Slightly smaller title font for mobile */
-        margin-top: 0; /* Remove top margin on mobile */
+        margin-top: -150px; /* Remove top margin on mobile */
     }
 
     button {
