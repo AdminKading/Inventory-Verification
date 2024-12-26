@@ -5,11 +5,8 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
 }
-
-/* Exit button styling */
-/* Exit button styling */
-#exit {
-    background-color: red;
+#send {
+    background-color: green;
     color: white;
     padding: 15px 30px;
     border: none;
@@ -20,13 +17,14 @@ body {
     text-align: center;
     margin: 20px auto; /* Center horizontally */
     display: block; /* Make it a block element for centering */
-    max-width: 40px; /* Limit width for smaller size */
+    max-width: 250px; /* Limit width for smaller size */
     width: 90%; /* Adjust to make it responsive */
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Optional shadow for better design */
+    margin-bottom: 60px;
 }
 
-#exit:hover {
-    background-color: darkred;
+#send:hover {
+    background-color: darkgreen;
 }
 
 
@@ -66,7 +64,6 @@ body {
 .container {
     text-align: center;
     padding: 50px 20px;
-
 }
 
 /* Content section */
@@ -80,7 +77,6 @@ body {
     max-width: 800px;
     line-height: 1.8;
     position: relative;
-    
 }
 
 .content p {
@@ -92,39 +88,9 @@ body {
     width: 100%;
 }
 
-/* Buttons section */
-.button-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 buttons per row */
-    gap: 10px;
-    max-width: 300px;
-    margin: 20px auto;
-}
-
-.button-grid a {
-    padding: 10px;
-    background-color: #505050;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    border: 1px solid black;
-    box-sizing: border-box;
-    font-size: 16px;
-
-    /* Fix uneven spacing */
-    display: flex; /* Align content inside */
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
-}
-
-.button-grid a:hover {
-    background-color: #696969;
-}
-/* Inventory container */
-
 /* Table styling */
 table {
-    width: 70%;
+    width: 80%; /* Slightly increased for three columns */
     margin: 50px auto;
     border-collapse: collapse;
     border: 2px solid white;
@@ -139,6 +105,7 @@ th, td {
     padding: 15px;
     text-align: center;
     border: 1px solid #505050;
+    word-wrap: break-word; /* Ensure long text wraps properly */
 }
 
 th {
@@ -153,6 +120,17 @@ td {
     font-size: 16px;
 }
 
+/* Manual Quantity input styling */
+td input[type="number"] {
+    width: 90%; /* Fit within the cell */
+    padding: 5px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Responsive Design */
 @media only screen and (max-width: 600px) {
     .navbar {
         flex-wrap: wrap;
@@ -161,6 +139,8 @@ td {
     .navbar a {
         flex: 1 1 50%;
         text-align: center;
+        font-size: 12px; /* Smaller font for links */
+        padding: 8px; /* Reduce padding */
         border-right: none; /* Remove right borders in mobile view */
     }
 
@@ -171,15 +151,15 @@ td {
     .button-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr); /* 2 buttons per row */
-        gap: 10px;
-        max-width: 300px;
-        margin: 20px auto;
+        gap: 5px; /* Reduce spacing between buttons */
+        max-width: 260px; /* Slightly smaller width for compact display */
+        margin: 10px auto; /* Reduce margin for better alignment */
     }
 
     .button-grid a {
-        padding: 10px;
-        font-size: 14px;
-        border-radius: 5px;
+        padding: 8px; /* Reduce button padding */
+        font-size: 12px; /* Smaller font size */
+        border-radius: 4px; /* Slightly smaller border radius */
         background-color: #505050;
         color: white;
         border: 1px solid black;
@@ -194,7 +174,7 @@ td {
     /* Add bottom border explicitly for the first row (top buttons) */
     .button-grid a:nth-child(1),
     .button-grid a:nth-child(2) {
-        border-bottom: 2px solid black; /* Ensure a visible black bottom border */
+        border-bottom: 1px solid black; /* Thinner bottom border */
     }
 
     /* Ensure no bottom border for the bottom row buttons */
