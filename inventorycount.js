@@ -34,7 +34,7 @@ window.onload = () => {
                 const name = row["__EMPTY"];
                 const quantity = row["__EMPTY_2"];
 
-                if (!name || !quantity || name === 'Name' || quantity === 'Quantity') {
+                if (!name || !quantity || name === 'Name' || quantity === 'Quantity' || name.toLowerCase().startsWith('zz')) {
                     return; // Skip invalid rows
                 }
 
@@ -94,44 +94,50 @@ window.onload = () => {
                 // Add click event to send the table data via email
                 sendButton.addEventListener('click', () => {
                     try {
-                        // Re-sync manual quantities before generating the workbook
+                        const shopName = parsedData.find(item => item["Inventory By Shop"]?.startsWith('Locations:'))
+                            ?.[ "Inventory By Shop"].split(': ')[1]?.trim() || 'Unknown Shop';
+                        const currentDate = new Date().toLocaleDateString();
+                
                         const allTableRows = document.querySelectorAll('table tr');
                         allTableRows.forEach((row, index) => {
                             if (index === 0) return; // Skip header row
-                
                             const manualInput = row.querySelector('input[type="number"]');
                             if (manualInput) {
-                                // Add five spaces in front of the manual quantity value
+                                // Add 10 spaces in front of the manual quantity value
                                 tableRows[index - 1].ManualQuantity = `          ${manualInput.value || ''}`;
                             }
                         });
                 
-                        // Create a new workbook and worksheet
                         const workbook = XLSX.utils.book_new();
                         const worksheet = XLSX.utils.json_to_sheet(tableRows);
-                
-                        // Append the worksheet to the workbook
                         XLSX.utils.book_append_sheet(workbook, worksheet, 'Inventory');
-                
-                        // Convert workbook to a binary string
                         const workbookBinary = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-                        const blob = new Blob([workbookBinary], { type: 'application/octet-stream' });
+                        const blob = new Blob([workbookBinary], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
                 
-                        // Create a URL for the Blob
+                        // Prepare email
+                        const email = 'hill101779@gmail.com';
+                        const subject = `${shopName} | Inventory Count | ${currentDate}`;
+                        const body = `Attached is the inventory count. This report was generated on ${currentDate} for ${shopName}. Please review the details in the attached file.`;
+                
+                        // Create file download and send via mailto
                         const fileUrl = URL.createObjectURL(blob);
-                
-                        // Create a download link for the file
                         const downloadLink = document.createElement('a');
                         downloadLink.href = fileUrl;
                         downloadLink.download = 'Inventory_Count.xlsx';
                         downloadLink.click();
                 
-                        alert('Inventory data sent!');
+                        // Construct mailto link
+                        const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                        window.location.href = mailtoLink;
+                
+                        alert('Email prepared with Inventory file attached. Please send manually.');
                     } catch (error) {
                         console.error('Error generating Excel file:', error);
-                        alert('Failed to generate Excel file.');
+                        alert('Failed to generate and send Excel file.');
                     }
                 });
+                
+                
                 
                 
                 
