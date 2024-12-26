@@ -34,12 +34,6 @@ body {
     border-radius: 5px;
 }
 
-
-.navbar a:hover {
-    background-color: #505050;
-    border-radius: 5px;
-}
-
 .container {
     text-align: center;
     padding: 50px 20px;
