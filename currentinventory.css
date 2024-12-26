@@ -6,6 +6,30 @@ body {
     margin: 0;
 }
 
+/* Exit button styling */
+/* Exit button styling */
+#exit {
+    background-color: red;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 20px; /* Curved rectangle */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    margin: 20px auto; /* Center horizontally */
+    display: block; /* Make it a block element for centering */
+    max-width: 40px; /* Limit width for smaller size */
+    width: 90%; /* Adjust to make it responsive */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Optional shadow for better design */
+}
+
+#exit:hover {
+    background-color: darkred;
+}
+
+
 /* Navbar styling */
 .navbar {
     display: flex;
@@ -20,7 +44,7 @@ body {
 .navbar a {
     color: white;
     text-decoration: none;
-    padding: 10px 20px;
+    padding: 10px;
     margin: 0;
     border-right: 1px solid black;
     box-sizing: border-box;
@@ -37,9 +61,6 @@ body {
     background-color: #505050;
     border-radius: 5px;
 }
-/* Inventory container */
-
-/* Table styling */
 table {
     width: 70%;
     margin: 50px auto;
