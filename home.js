@@ -13,8 +13,9 @@ window.onload = () => {
             const locationValue = parsedData[1]?.["Inventory By Shop"]; // Extract the second row, "Inventory By Shop" key
 
             if (locationValue) {
-                // Update the header text to the value of "Locations: Adel Shop"
-                document.querySelector('header h1').textContent = locationValue.replace("Locations: ", "").trim();
+                // Update the shop name (header text) to the value of "Locations: Adel Shop"
+                const shopNameElement = document.getElementById('shop-name');
+                shopNameElement.textContent = locationValue.replace("Locations: ", "").trim();
             } else {
                 console.warn('Location value not found or is empty.');
             }

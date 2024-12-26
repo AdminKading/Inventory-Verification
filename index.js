@@ -22,7 +22,6 @@ document.querySelectorAll('.container button').forEach(button => {
                 const jsonData = XLSX.utils.sheet_to_json(sheet);
 
                 console.log('Excel Data:', jsonData);
-                alert(`${shopName} data successfully loaded!`);
 
                 // Save the data to localStorage and redirect
                 localStorage.setItem('excelData', JSON.stringify(jsonData));
