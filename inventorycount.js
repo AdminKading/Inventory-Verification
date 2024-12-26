@@ -130,7 +130,7 @@ window.onload = () => {
                         const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                         window.location.href = mailtoLink;
                 
-                        alert('Email prepared with Inventory file attached. Please send manually.');
+                        alert('Email prepared, but you must attach the downloaded excel file');
                     } catch (error) {
                         console.error('Error generating Excel file:', error);
                         alert('Failed to generate and send Excel file.');
