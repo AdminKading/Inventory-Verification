@@ -1,0 +1,88 @@
+/* General styles */
+body {
+    background-color: #696969;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+
+
+/* Navbar styling */
+.navbar {
+    display: flex;
+    justify-content: center;
+    background-color: #505050;
+    padding: 10px 0;
+    border-bottom: 2px solid black;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-right: 1px solid black;
+}
+
+.navbar a:last-child {
+    border-right: none;
+}
+
+.navbar a:hover {
+    background-color: #505050;
+    border-radius: 5px;
+}
+
+/* Inventory container */
+
+/* Table styling */
+table {
+    width: 70%;
+    margin: 50px auto;
+    border-collapse: collapse;
+    border: 2px solid white;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: white;
+    color: black;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+th, td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #505050;
+}
+
+th {
+    background-color: #505050;
+    color: white;
+    font-size: 18px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+td {
+    font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    table {
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 10px;
+    }
+
+    .navbar a {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+
+    header {
+        font-size: 20px;
+    }
+}

@@ -1,0 +1,77 @@
+/* General styles */ 
+body {
+    background-color: #808080;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Container styling */
+.container {
+    text-align: center;
+    position: relative;
+    width: 300px;
+}
+
+/* Title styling */
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* Button styling */
+button {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 10px 15px; /* Shortened buttons on the sides */
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, transform 0.2s;
+    margin: 10px 0;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #f1f1f1;
+    transform: scale(1.05);
+}
+
+button:active {
+    background-color: #e0e0e0;
+    transform: scale(0.98);
+}
+
+/* Upload Shop Button */
+.upload-shop-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px; /* Matches other button sizes */
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, transform 0.2s;
+    width: auto; /* Ensures it doesn't stretch across */
+}
+
+.upload-shop-button:hover {
+    background-color: #45a049;
+}
+
+.upload-shop-button:active {
+    background-color: #3e8e41;
+}

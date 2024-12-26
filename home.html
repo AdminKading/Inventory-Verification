@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="home.css">
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Shop</h1>
+    </header>
+    <nav class="navbar">
+        <a href="index.html">Home</a>
+        <a href="#" id="current-inventory">Current Inventory</a>
+        <a href="#" id="inventory-invoice">Inventory Invoice</a>
+        <a href="#" id="shipment-invoice">Shipment Invoice</a>
+    </nav>
+    <div class="content">
+        <p>
+            Click <strong>Current Inventory</strong> to view the current inventory in the database, along with detailed information extracted from the uploaded Excel document.
+        </p>
+        <p>
+            Click <strong>Inventory Invoice</strong> to allow a technician to input and finalize a comprehensive inventory count, which can then be submitted to the supplier as an email attachment.
+        </p>
+        <p>
+            Click <strong>Shipment Invoice</strong> to record and manage shipment details from the last received shipment, enabling these records to be sent to the supplier as an email attachment.
+        </p>
+    </div>
+    <script src="home.js"></script>
+</body>
+</html>
