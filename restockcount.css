@@ -130,7 +130,6 @@ td input[type="number"] {
     text-align: center;
 }
 
-/* Responsive Design */
 @media only screen and (max-width: 600px) {
     .navbar {
         flex-wrap: wrap;
@@ -139,8 +138,6 @@ td input[type="number"] {
     .navbar a {
         flex: 1 1 50%;
         text-align: center;
-        font-size: 12px; /* Smaller font for links */
-        padding: 8px; /* Reduce padding */
         border-right: none; /* Remove right borders in mobile view */
     }
 
@@ -151,15 +148,15 @@ td input[type="number"] {
     .button-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr); /* 2 buttons per row */
-        gap: 5px; /* Reduce spacing between buttons */
-        max-width: 260px; /* Slightly smaller width for compact display */
-        margin: 10px auto; /* Reduce margin for better alignment */
+        gap: 10px;
+        max-width: 300px;
+        margin: 20px auto;
     }
 
     .button-grid a {
-        padding: 8px; /* Reduce button padding */
-        font-size: 12px; /* Smaller font size */
-        border-radius: 4px; /* Slightly smaller border radius */
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 5px;
         background-color: #505050;
         color: white;
         border: 1px solid black;
@@ -174,7 +171,7 @@ td input[type="number"] {
     /* Add bottom border explicitly for the first row (top buttons) */
     .button-grid a:nth-child(1),
     .button-grid a:nth-child(2) {
-        border-bottom: 1px solid black; /* Thinner bottom border */
+        border-bottom: 2px solid black; /* Ensure a visible black bottom border */
     }
 
     /* Ensure no bottom border for the bottom row buttons */
