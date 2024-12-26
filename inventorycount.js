@@ -78,16 +78,8 @@ window.onload = () => {
                 // Add the "Send Inventory Count" button
                 const sendButton = document.createElement('button');
                 sendButton.id = 'send';
+                sendButton.className = 'send'; // Add a CSS class
                 sendButton.textContent = 'Send Inventory Count';
-                sendButton.style.marginTop = '20px'; // Add spacing
-                sendButton.style.backgroundColor = 'green';
-                sendButton.style.color = 'white';
-                sendButton.style.padding = '10px 20px';
-                sendButton.style.border = 'none';
-                sendButton.style.borderRadius = '5px';
-                sendButton.style.cursor = 'pointer';
-                sendButton.style.display = 'block';
-                sendButton.style.margin = '20px auto';
 
                 inventoryContainer.appendChild(sendButton);
 
@@ -95,8 +87,8 @@ window.onload = () => {
                 sendButton.addEventListener('click', () => {
                     try {
                         const shopName = parsedData.find(item => item["Inventory By Shop"]?.startsWith('Locations:'))
-                            ?.[ "Inventory By Shop"].split(': ')[1]?.trim() || 'Unknown Shop';
-                        const currentDate = new Date().toLocaleDateString();
+                            ?.[ "Inventory By Shop"].split(': ')[1]?.trim().replace(/\s+/g, '_') || 'Unknown_Shop'; // Replace spaces with underscores
+                        const currentDate = new Date().toLocaleDateString().replace(/\//g, '-'); // Replace slashes with dashes for filename compatibility
                 
                         const allTableRows = document.querySelectorAll('table tr');
                         allTableRows.forEach((row, index) => {
@@ -114,28 +106,32 @@ window.onload = () => {
                         const workbookBinary = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
                         const blob = new Blob([workbookBinary], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
                 
-                        // Prepare email
-                        const email = 'hill101779@gmail.com';
-                        const subject = `${shopName} | Inventory Count | ${currentDate}`;
-                        const body = `Attached is the inventory count. This report was generated on ${currentDate} for ${shopName}. Please review the details in the attached file.`;
+                        // Generate dynamic file name
+                        const fileName = `${shopName}_Inventory_Count_${currentDate}.xlsx`;
                 
-                        // Create file download and send via mailto
+                        // Create file download
                         const fileUrl = URL.createObjectURL(blob);
                         const downloadLink = document.createElement('a');
                         downloadLink.href = fileUrl;
-                        downloadLink.download = 'Inventory_Count.xlsx';
+                        downloadLink.download = fileName;
                         downloadLink.click();
+                
+                        // Prepare email
+                        const email = 'hill101779@gmail.com';
+                        const subject = `${shopName} | Inventory Count | ${currentDate}`;
+                        const body = `Attached is the inventory count. This report was generated on ${currentDate} for ${shopName.replace(/_/g, ' ')}. Please review the details in the attached file.`;
                 
                         // Construct mailto link
                         const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                         window.location.href = mailtoLink;
                 
-                        alert('Email prepared, but you must attach the downloaded excel file');
+                        alert('Email prepared. Please attach the downloaded Excel file before sending.');
                     } catch (error) {
                         console.error('Error generating Excel file:', error);
                         alert('Failed to generate and send Excel file.');
                     }
                 });
+                
                 
                 
                 
