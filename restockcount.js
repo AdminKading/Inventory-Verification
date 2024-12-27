@@ -112,16 +112,18 @@ window.onload = () => {
                         downloadLink.download = fileName;
                         downloadLink.click();
 
-                        // Prepare email
-                        const email = 'hill101779@gmail.com';
-                        const subject = `${shopName} | Restock Count | ${currentDate}`;
-                        const body = `Attached is the restock count. This report was generated on ${currentDate} for ${shopName.replace(/_/g, ' ')}. Please review the details in the attached file.`;
+                        // Open email client after a slight delay
+                        setTimeout(() => {
+                            const email = 'hill101779@gmail.com';
+                            const subject = `${shopName} | Restock Count | ${currentDate}`;
+                            const body = `Attached is the restock count. This report was generated on ${currentDate} for ${shopName.replace(/_/g, ' ')}. Please review the details in the attached file.`;
 
-                        // Construct mailto link
-                        const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                        window.location.href = mailtoLink;
+                            // Construct mailto link
+                            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                            window.location.href = mailtoLink;
 
-                        alert('Email prepared. Please attach the downloaded Excel file before sending.');
+                            alert('Email prepared. Please attach the downloaded Excel file before sending.');
+                        }, 1000); // Delay ensures download finishes before email opens
                     } catch (error) {
                         console.error('Error generating Excel file:', error);
                         alert('Failed to generate and send Excel file.');
