@@ -16,11 +16,13 @@ window.onload = () => {
             table.border = '1';
 
             // Add table headers
-            const headers = ['Name', 'Manual Quantity'];
+            const headers = ['NAME', 'MANUAL QUANTITY'];
             const headerRow = document.createElement('tr');
             headers.forEach(headerText => {
                 const th = document.createElement('th');
                 th.textContent = headerText;
+                th.style.padding = '10px'; // Add spacing to the header cells
+                th.style.textAlign = 'center'; // Center-align the header text
                 headerRow.appendChild(th);
             });
             table.appendChild(headerRow);
@@ -28,7 +30,7 @@ window.onload = () => {
             let validDataFound = false;
             const tableRows = []; // Collect data for saving to Excel
 
-            parsedData.slice(1).forEach((row) => {
+            parsedData.slice(1).forEach((row, index) => {
                 const name = row["__EMPTY"];
                 const quantity = parseInt(row["__EMPTY_2"], 10);
                 const reorder = parseInt(row["__EMPTY_3"], 10);
@@ -40,29 +42,31 @@ window.onload = () => {
 
                 const tableRow = document.createElement('tr');
 
-                // Add the "Name" column
+                // Add the "NAME" column
                 const nameCell = document.createElement('td');
-                nameCell.textContent = name;
+                nameCell.textContent = name.trim(); // Ensure whitespace is trimmed
+                nameCell.style.padding = '10px'; // Add spacing to cells
                 tableRow.appendChild(nameCell);
 
-                // Add the "Manual Quantity" column
+                // Add the "MANUAL QUANTITY" column
                 const manualQuantityCell = document.createElement('td');
                 const manualInput = document.createElement('input');
                 manualInput.type = 'number';
                 manualInput.placeholder = 'Enter value';
-                manualInput.style.width = '100%'; // Optional: Make input fill the cell
+                manualInput.style.width = '100%'; // Fill the cell width
+                manualInput.style.textAlign = 'center'; // Center-align input text
                 manualQuantityCell.appendChild(manualInput);
                 tableRow.appendChild(manualQuantityCell);
 
                 table.appendChild(tableRow);
 
                 // Save initial row data for Excel export
-                const rowData = { Name: name, ManualQuantity: '' };
+                const rowData = { NAME: name.trim(), 'MANUAL QUANTITY': null };
                 tableRows.push(rowData);
 
                 // Update the manual quantity value on input
                 manualInput.addEventListener('input', (e) => {
-                    rowData.ManualQuantity = `          ${e.target.value}`; // Add 10 spaces in front
+                    rowData['MANUAL QUANTITY'] = e.target.value ? parseFloat(e.target.value) : null; // Ensure numeric type
                 });
 
                 validDataFound = true;
@@ -71,11 +75,11 @@ window.onload = () => {
             if (validDataFound) {
                 inventoryContainer.appendChild(table);
 
-                // Add the "Send Restock Count" button
+                // Add the "Send Reorder Count" button
                 const sendButton = document.createElement('button');
                 sendButton.id = 'send';
                 sendButton.className = 'send'; // Add a CSS class
-                sendButton.textContent = 'Send Restock Count';
+                sendButton.textContent = 'Send Reorder Count';
 
                 inventoryContainer.appendChild(sendButton);
 
@@ -88,7 +92,7 @@ window.onload = () => {
                             if (index === 0) return; // Skip header row
                             const manualInput = row.querySelector('input[type="number"]');
                             if (manualInput) {
-                                tableRows[index - 1].ManualQuantity = `          ${manualInput.value || ''}`; // Add 10 spaces in front
+                                tableRows[index - 1]['MANUAL QUANTITY'] = manualInput.value ? parseFloat(manualInput.value) : null;
                             }
                         });
 
@@ -97,13 +101,20 @@ window.onload = () => {
                         const currentDate = new Date().toLocaleDateString().replace(/\//g, '-'); // Replace slashes with dashes for filename compatibility
 
                         const workbook = XLSX.utils.book_new();
-                        const worksheet = XLSX.utils.json_to_sheet(tableRows);
-                        XLSX.utils.book_append_sheet(workbook, worksheet, 'Restock');
+                        const worksheet = XLSX.utils.json_to_sheet(tableRows, { header: headers });
+
+                        // Apply column widths to prevent text truncation
+                        worksheet['!cols'] = [
+                            { wch: 50 }, // Wider NAME column
+                            { wch: 20 }, // MANUAL QUANTITY column width
+                        ];
+
+                        XLSX.utils.book_append_sheet(workbook, worksheet, 'Reorder');
                         const workbookBinary = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
                         const blob = new Blob([workbookBinary], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
                         // Generate dynamic file name
-                        const fileName = `${shopName}_Restock_Count_${currentDate}.xlsx`;
+                        const fileName = `${shopName}_Reorder_Count_${currentDate}.xlsx`;
 
                         // Create file download
                         const fileUrl = URL.createObjectURL(blob);
@@ -115,8 +126,8 @@ window.onload = () => {
                         // Open email client after a slight delay
                         setTimeout(() => {
                             const email = 'hill101779@gmail.com';
-                            const subject = `${shopName} | Restock Count | ${currentDate}`;
-                            const body = `Attached is the restock count. This report was generated on ${currentDate} for ${shopName.replace(/_/g, ' ')}. Please review the details in the attached file.`;
+                            const subject = `${shopName} | Reorder Count | ${currentDate}`;
+                            const body = `Attached is the reorder count. This report was generated on ${currentDate} for ${shopName.replace(/_/g, ' ')}. Please review the details in the attached file.`;
 
                             // Construct mailto link
                             const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -131,7 +142,7 @@ window.onload = () => {
                 });
             } else {
                 const noDataMessage = document.createElement('p');
-                noDataMessage.textContent = 'No items require restocking.';
+                noDataMessage.textContent = 'No valid reorder data to display.';
                 inventoryContainer.appendChild(noDataMessage);
             }
         } catch (error) {
@@ -140,7 +151,7 @@ window.onload = () => {
         }
     } else {
         const warningMessage = document.createElement('p');
-        warningMessage.textContent = 'No inventory data available.';
+        warningMessage.textContent = 'No reorder data available.';
         document.getElementById('inventory-container').appendChild(warningMessage);
     }
 };

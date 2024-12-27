@@ -17,7 +17,7 @@ window.onload = () => {
             table.border = '1';
 
             // Add table headers
-            const headers = ['Name', 'Quantity', 'Manual Quantity'];
+            const headers = ['NAME', 'QUANTITY', 'MANUAL QUANTITY'];
             const headerRow = document.createElement('tr');
             headers.forEach(headerText => {
                 const th = document.createElement('th');
@@ -40,17 +40,17 @@ window.onload = () => {
 
                 const tableRow = document.createElement('tr');
 
-                // Add the "Name" column
+                // Add the "NAME" column
                 const nameCell = document.createElement('td');
                 nameCell.textContent = name;
                 tableRow.appendChild(nameCell);
 
-                // Add the "Quantity" column
+                // Add the "QUANTITY" column
                 const quantityCell = document.createElement('td');
                 quantityCell.textContent = quantity;
                 tableRow.appendChild(quantityCell);
 
-                // Add the "Manual Quantity" column
+                // Add the "MANUAL QUANTITY" column
                 const manualQuantityCell = document.createElement('td');
                 const manualInput = document.createElement('input');
                 manualInput.type = 'number';
@@ -62,11 +62,12 @@ window.onload = () => {
                 table.appendChild(tableRow);
 
                 // Save initial row data for Excel export
-                tableRows.push({ Name: name, Quantity: quantity, ManualQuantity: '' });
+                tableRows.push({ NAME: name, QUANTITY: quantity, 'MANUAL QUANTITY': null }); // Use null to ensure numeric type
 
                 // Update the manual quantity value on input
                 manualInput.addEventListener('input', (e) => {
-                    tableRows[index].ManualQuantity = e.target.value;
+                    const value = e.target.value;
+                    tableRows[index]['MANUAL QUANTITY'] = value ? parseFloat(value) : null; // Convert to number
                 });
 
                 validDataFound = true;
@@ -95,13 +96,35 @@ window.onload = () => {
                             if (index === 0) return; // Skip header row
                             const manualInput = row.querySelector('input[type="number"]');
                             if (manualInput) {
-                                // Add 10 spaces in front of the manual quantity value
-                                tableRows[index - 1].ManualQuantity = `          ${manualInput.value || ''}`;
+                                tableRows[index - 1]['MANUAL QUANTITY'] = manualInput.value ? parseFloat(manualInput.value) : null; // Ensure numeric type
                             }
                         });
 
                         const workbook = XLSX.utils.book_new();
-                        const worksheet = XLSX.utils.json_to_sheet(tableRows);
+                        const worksheet = XLSX.utils.json_to_sheet(tableRows, { header: headers });
+
+                        // Apply column widths to prevent text truncation
+                        worksheet['!cols'] = [
+                            { wch: 50 }, // Wider NAME column
+                            { wch: 15 }, // QUANTITY column width
+                            { wch: 20 }, // MANUAL QUANTITY column width
+                        ];
+
+                        // Style the header row
+                        const headerRange = XLSX.utils.decode_range(worksheet['!ref']);
+                        for (let col = headerRange.s.c; col <= headerRange.e.c; col++) {
+                            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+                            if (worksheet[cellAddress]) {
+                                worksheet[cellAddress].s = {
+                                    font: { bold: true }, // Bold text
+                                    alignment: { horizontal: 'center', vertical: 'center' }, // Center alignment
+                                    border: {
+                                        bottom: { style: 'medium', color: { rgb: '000000' } }, // Dark line below header
+                                    },
+                                };
+                            }
+                        }
+
                         XLSX.utils.book_append_sheet(workbook, worksheet, 'Inventory');
                         const workbookBinary = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
                         const blob = new Blob([workbookBinary], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
