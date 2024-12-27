@@ -89,7 +89,7 @@ window.onload = () => {
                         const shopName = parsedData.find(item => item["Inventory By Shop"]?.startsWith('Locations:'))
                             ?.[ "Inventory By Shop"].split(': ')[1]?.trim().replace(/\s+/g, '_') || 'Unknown_Shop'; // Replace spaces with underscores
                         const currentDate = new Date().toLocaleDateString().replace(/\//g, '-'); // Replace slashes with dashes for filename compatibility
-                
+                        
                         const allTableRows = document.querySelectorAll('table tr');
                         allTableRows.forEach((row, index) => {
                             if (index === 0) return; // Skip header row
@@ -99,44 +99,41 @@ window.onload = () => {
                                 tableRows[index - 1].ManualQuantity = `          ${manualInput.value || ''}`;
                             }
                         });
-                
+
                         const workbook = XLSX.utils.book_new();
                         const worksheet = XLSX.utils.json_to_sheet(tableRows);
                         XLSX.utils.book_append_sheet(workbook, worksheet, 'Inventory');
                         const workbookBinary = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
                         const blob = new Blob([workbookBinary], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                
+
                         // Generate dynamic file name
                         const fileName = `${shopName}_Inventory_Count_${currentDate}.xlsx`;
-                
+
                         // Create file download
                         const fileUrl = URL.createObjectURL(blob);
                         const downloadLink = document.createElement('a');
                         downloadLink.href = fileUrl;
                         downloadLink.download = fileName;
                         downloadLink.click();
-                
-                        // Prepare email
-                        const email = 'hill101779@gmail.com';
-                        const subject = `${shopName} | Inventory Count | ${currentDate}`;
-                        const body = `Attached is the inventory count. This report was generated on ${currentDate} for ${shopName.replace(/_/g, ' ')}. Please review the details in the attached file.`;
-                
-                        // Construct mailto link
-                        const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                        window.location.href = mailtoLink;
-                
-                        alert('Email prepared. Please attach the downloaded Excel file before sending.');
+
+                        // Open email client after a short delay
+                        setTimeout(() => {
+                            // Prepare email
+                            const email = 'hill101779@gmail.com';
+                            const subject = `${shopName} | Inventory Count | ${currentDate}`;
+                            const body = `Attached is the inventory count. This report was generated on ${currentDate} for ${shopName.replace(/_/g, ' ')}. Please review the details in the attached file.`;
+
+                            // Construct mailto link
+                            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                            window.location.href = mailtoLink;
+
+                            alert('Email prepared. Please attach the downloaded Excel file before sending.');
+                        }, 1000); // Delay ensures download finishes before email opens
                     } catch (error) {
                         console.error('Error generating Excel file:', error);
                         alert('Failed to generate and send Excel file.');
                     }
                 });
-                
-                
-                
-                
-                
-                
             } else {
                 const noDataMessage = document.createElement('p');
                 noDataMessage.textContent = 'No valid inventory data to display.';
