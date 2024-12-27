@@ -1,7 +1,4 @@
 window.onload = () => {
-    // Initialize EmailJS
-    emailjs.init("NBLAa3mFvh2IL8Lxe");
-
     // Retrieve the uploaded Excel data from localStorage
     const excelData = localStorage.getItem('excelData');
     console.log('Excel Data in Local Storage:', excelData); // Log the raw data
@@ -101,7 +98,7 @@ window.onload = () => {
 
                         const shopName = parsedData.find(item => item["Inventory By Shop"]?.startsWith('Locations:'))
                             ?.[ "Inventory By Shop"].split(': ')[1]?.trim().replace(/\s+/g, '_') || 'Unknown_Shop'; // Replace spaces with underscores
-                        const currentDate = new Date().toLocaleDateString();
+                        const currentDate = new Date().toLocaleDateString().replace(/\//g, '-'); // Replace slashes with dashes for filename compatibility
 
                         const workbook = XLSX.utils.book_new();
                         const worksheet = XLSX.utils.json_to_sheet(tableRows, { header: headers });
@@ -116,33 +113,31 @@ window.onload = () => {
                         const workbookBinary = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
                         const blob = new Blob([workbookBinary], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
-                        // Convert Blob to Base64 for EmailJS
-                        const reader = new FileReader();
-                        reader.onload = function () {
-                            const base64File = reader.result.split(',')[1]; // Extract Base64 string
+                        // Generate dynamic file name
+                        const fileName = `${shopName}_Restock_Count_${currentDate}.xlsx`;
 
-                            // Send the email via EmailJS
-                            emailjs.send("service_jydp879", "template_11vi1zf", {
-                                shopName: shopName, // Dynamic placeholder for shopName
-                                date: currentDate, // Dynamic placeholder for the date
-                                emailType: "Restock", // Specify "Restock" or "Inventory"
-                                to_email: "hill101779@gmail.com", // Your email address
-                                attachment: base64File, // Attach the file as a Base64 string
-                                filename: `${shopName}_Restock_Count_${currentDate}.xlsx`,
-                            }).then(
-                                function (response) {
-                                    alert("Email sent successfully!");
-                                },
-                                function (error) {
-                                    console.error("Failed to send email:", error);
-                                    alert("Failed to send email.");
-                                }
-                            );
-                        };
-                        reader.readAsDataURL(blob); // Convert Blob to Base64
+                        // Create file download
+                        const fileUrl = URL.createObjectURL(blob);
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = fileUrl;
+                        downloadLink.download = fileName;
+                        downloadLink.click();
+
+                        // Open email client after a slight delay
+                        setTimeout(() => {
+                            const email = 'hill101779@gmail.com';
+                            const subject = `${shopName} | Restock Count | ${currentDate}`;
+                            const body = `Attached is the restock count. This report was generated on ${currentDate} for ${shopName.replace(/_/g, ' ')}. Please review the details in the attached file.`;
+
+                            // Construct mailto link
+                            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                            window.location.href = mailtoLink;
+
+                            alert('Email prepared. Please attach the downloaded Excel file before sending.');
+                        }, 1000); // Delay ensures download finishes before email opens
                     } catch (error) {
                         console.error('Error generating Excel file:', error);
-                        alert('Failed to generate and send email.');
+                        alert('Failed to generate and send Excel file.');
                     }
                 });
             } else {
