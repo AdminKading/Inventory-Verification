@@ -1,4 +1,7 @@
 window.onload = () => {
+    // Initialize EmailJS
+    emailjs.init("NBLAa3mFvh2IL8Lxe");
+
     // Retrieve the uploaded Excel data from localStorage
     const excelData = localStorage.getItem('excelData');
     console.log('Excel Data in Local Storage:', excelData); // Log the raw data
@@ -33,10 +36,10 @@ window.onload = () => {
             parsedData.slice(1).forEach((row, index) => {
                 const name = row["__EMPTY"];
                 const quantity = parseInt(row["__EMPTY_2"], 10);
-                const reorder = parseInt(row["__EMPTY_3"], 10);
+                const restock = parseInt(row["__EMPTY_3"], 10);
 
-                // Include only items with Quantity < Reorder
-                if (!name || isNaN(quantity) || isNaN(reorder) || quantity >= reorder || name.toLowerCase().startsWith('zz')) {
+                // Include only items with Quantity < Restock
+                if (!name || isNaN(quantity) || isNaN(restock) || quantity >= restock || name.toLowerCase().startsWith('zz')) {
                     return; // Skip invalid rows
                 }
 
@@ -75,11 +78,11 @@ window.onload = () => {
             if (validDataFound) {
                 inventoryContainer.appendChild(table);
 
-                // Add the "Send Reorder Count" button
+                // Add the "Send Restock Count" button
                 const sendButton = document.createElement('button');
                 sendButton.id = 'send';
                 sendButton.className = 'send'; // Add a CSS class
-                sendButton.textContent = 'Send Reorder Count';
+                sendButton.textContent = 'Send Restock Count';
 
                 inventoryContainer.appendChild(sendButton);
 
@@ -98,7 +101,7 @@ window.onload = () => {
 
                         const shopName = parsedData.find(item => item["Inventory By Shop"]?.startsWith('Locations:'))
                             ?.[ "Inventory By Shop"].split(': ')[1]?.trim().replace(/\s+/g, '_') || 'Unknown_Shop'; // Replace spaces with underscores
-                        const currentDate = new Date().toLocaleDateString().replace(/\//g, '-'); // Replace slashes with dashes for filename compatibility
+                        const currentDate = new Date().toLocaleDateString();
 
                         const workbook = XLSX.utils.book_new();
                         const worksheet = XLSX.utils.json_to_sheet(tableRows, { header: headers });
@@ -109,40 +112,42 @@ window.onload = () => {
                             { wch: 20 }, // MANUAL QUANTITY column width
                         ];
 
-                        XLSX.utils.book_append_sheet(workbook, worksheet, 'Reorder');
+                        XLSX.utils.book_append_sheet(workbook, worksheet, 'Restock');
                         const workbookBinary = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
                         const blob = new Blob([workbookBinary], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
-                        // Generate dynamic file name
-                        const fileName = `${shopName}_Reorder_Count_${currentDate}.xlsx`;
+                        // Convert Blob to Base64 for EmailJS
+                        const reader = new FileReader();
+                        reader.onload = function () {
+                            const base64File = reader.result.split(',')[1]; // Extract Base64 string
 
-                        // Create file download
-                        const fileUrl = URL.createObjectURL(blob);
-                        const downloadLink = document.createElement('a');
-                        downloadLink.href = fileUrl;
-                        downloadLink.download = fileName;
-                        downloadLink.click();
-
-                        // Open email client after a slight delay
-                        setTimeout(() => {
-                            const email = 'hill101779@gmail.com';
-                            const subject = `${shopName} | Reorder Count | ${currentDate}`;
-                            const body = `Attached is the reorder count. This report was generated on ${currentDate} for ${shopName.replace(/_/g, ' ')}. Please review the details in the attached file.`;
-
-                            // Construct mailto link
-                            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                            window.location.href = mailtoLink;
-
-                            alert('Email prepared. Please attach the downloaded Excel file before sending.');
-                        }, 1000); // Delay ensures download finishes before email opens
+                            // Send the email via EmailJS
+                            emailjs.send("service_jydp879", "template_11vi1zf", {
+                                shopName: shopName, // Dynamic placeholder for shopName
+                                date: currentDate, // Dynamic placeholder for the date
+                                emailType: "Restock", // Specify "Restock" or "Inventory"
+                                to_email: "hill101779@gmail.com", // Your email address
+                                attachment: base64File, // Attach the file as a Base64 string
+                                filename: `${shopName}_Restock_Count_${currentDate}.xlsx`,
+                            }).then(
+                                function (response) {
+                                    alert("Email sent successfully!");
+                                },
+                                function (error) {
+                                    console.error("Failed to send email:", error);
+                                    alert("Failed to send email.");
+                                }
+                            );
+                        };
+                        reader.readAsDataURL(blob); // Convert Blob to Base64
                     } catch (error) {
                         console.error('Error generating Excel file:', error);
-                        alert('Failed to generate and send Excel file.');
+                        alert('Failed to generate and send email.');
                     }
                 });
             } else {
                 const noDataMessage = document.createElement('p');
-                noDataMessage.textContent = 'No valid reorder data to display.';
+                noDataMessage.textContent = 'No valid restock data to display.';
                 inventoryContainer.appendChild(noDataMessage);
             }
         } catch (error) {
@@ -151,7 +156,7 @@ window.onload = () => {
         }
     } else {
         const warningMessage = document.createElement('p');
-        warningMessage.textContent = 'No reorder data available.';
+        warningMessage.textContent = 'No restock data available.';
         document.getElementById('inventory-container').appendChild(warningMessage);
     }
 };
