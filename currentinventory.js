@@ -33,23 +33,9 @@ window.onload = () => {
             parsedData.slice(1).forEach(row => {
                 const name = row["__EMPTY"];
                 const quantity = row["__EMPTY_2"];
-
-                if (!name || !quantity) {
-                    // Skip rows without valid Name and Quantity
-                    return;
+                if (!name || quantity == null || name === 'Name' || quantity === 'Quantity' || name.toLowerCase().startsWith('zz')) {
+                    return; // Skip invalid rows
                 }
-                
-                if(name == 'Name' || quantity == 'Quantity') {
-                    return;
-                }
-
-                if (name.toLowerCase().startsWith('zz')) {
-                    // Skip rows where the name starts with "zz" (case-insensitive)
-                    console.warn(`Skipping product with name starting with 'zz': ${name}`);
-                    return;
-                }
-
-
                 const tableRow = document.createElement('tr');
 
                 // Add the "Name" column

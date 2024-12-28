@@ -2,6 +2,7 @@ window.onload = () => {
     // Retrieve the uploaded Excel data from localStorage
     const excelData = localStorage.getItem('excelData');
     console.log('Excel Data in Local Storage:', excelData); // Log the raw data
+    const currentPath = window.location.pathname;
 
     if (excelData) {
         try {
@@ -26,6 +27,33 @@ window.onload = () => {
                 headerRow.appendChild(th);
             });
             table.appendChild(headerRow);
+            // Helper functions to manage cookies
+            const setCookie = (key, value, days) => {
+                const date = new Date();
+                date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+                document.cookie = `${key}=${value};expires=${date.toUTCString()};path=${currentPath}`;
+            };
+
+            const getCookie = (key) => {
+                const name = `${key}=`;
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    cookie = cookie.trim();
+                    if (cookie.indexOf(name) === 0) {
+                        return cookie.substring(name.length, cookie.length);
+                    }
+                }
+                return null;
+            };
+
+            const clearCookies = () => {
+                const cookies = document.cookie.split(';');
+                cookies.forEach(cookie => {
+                    const eqPos = cookie.indexOf('=');
+                    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=${currentPath}`;
+                });
+            };
 
             let validDataFound = false;
             const tableRows = []; // Collect data for saving to Excel
@@ -83,6 +111,22 @@ window.onload = () => {
                 manualInput.placeholder = 'Enter value';
                 manualInput.style.width = '100%'; // Fill the cell width
                 manualInput.style.textAlign = 'center'; // Center-align input text
+
+                const savedValue = getCookie(name);
+                if (savedValue !== null) {
+                    manualInput.value = savedValue;
+                    tableRows.push({ NAME: name, QUANTITY: quantity, 'MANUAL QUANTITY': parseFloat(savedValue) });
+                } else {
+                    tableRows.push({ NAME: name, QUANTITY: quantity, 'MANUAL QUANTITY': null });
+                }
+
+                // Save changes to cookies
+                manualInput.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    tableRows[index]['MANUAL QUANTITY'] = value ? parseFloat(value) : null;
+                    setCookie(name, value, 7); // Save for 7 days
+                });
+
                 manualQuantityCell.appendChild(manualInput);
                 tableRow.appendChild(manualQuantityCell);
 
@@ -103,13 +147,32 @@ window.onload = () => {
             if (validDataFound) {
                 inventoryContainer.appendChild(table);
 
-                // Add the "Send Restock Count" button
+                // Create the button container
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'button-container';
+
+                // Add Reset button
+                const resetButton = document.createElement('button');
+                resetButton.id = 'reset';
+                resetButton.textContent = 'Reset';
+                buttonContainer.appendChild(resetButton);
+
+                // Add Send button
                 const sendButton = document.createElement('button');
                 sendButton.id = 'send';
-                sendButton.className = 'send'; // Add a CSS class
-                sendButton.textContent = 'Send Restock Count';
+                sendButton.textContent = 'Send Inventory Count';
+                buttonContainer.appendChild(sendButton);
 
-                inventoryContainer.appendChild(sendButton);
+                // Append the button container to the inventory container
+                inventoryContainer.appendChild(buttonContainer);
+                // Event for "Reset" button
+                resetButton.addEventListener('click', () => {
+                    clearCookies();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setTimeout(() => {
+                        location.reload(); // Reload after scroll finishes
+                    }, 700); // 500ms delay to ensure scrolling happens
+                });
 
                 // Add click event to send the table data via email
                 sendButton.addEventListener('click', () => {
@@ -150,17 +213,36 @@ window.onload = () => {
                         downloadLink.href = fileUrl;
                         downloadLink.download = fileName;
                         downloadLink.click();
+                        // Clear cookies
+                        document.cookie.split(';').forEach(cookie => {
+                            const eqPos = cookie.indexOf('=');
+                            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
+                        });
 
                         // Open email client after a slight delay
                         setTimeout(() => {
+                            // Prepare email
                             const email = 'hill101779@gmail.com';
-                            const subject = `${shopName} | Restock Count | ${currentDate}`;
-                            const body = `Attached is the restock count. This report was generated on ${currentDate} for ${shopName.replace(/_/g, ' ')}. Please review the details in the attached file.`;
-
+                            const emailType = "Restock"; // You can adjust this dynamically if needed
+                            const subject = `${shopName} | ${emailType} Count | ${currentDate}`;
+                            const body = `
+                        Hello,
+                        
+                        Attached is the ${emailType.toLowerCase()} count file for ${shopName.replace(/_/g, ' ')}. This file was generated on ${currentDate}.
+                        Please find the Excel document attached.
+                        
+                        Note: This is an automatic email sent from Inventory Verification. 
+                        Visit: https://adminkading.github.io/Inventory-Verification/
+                        
+                        Best regards,
+                        ${shopName.replace(/_/g, ' ')}
+                            `.trim();
+                        
                             // Construct mailto link
                             const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                             window.location.href = mailtoLink;
-
+                        
                             alert('Email prepared. Please attach the downloaded Excel file before sending.');
                         }, 1000); // Delay ensures download finishes before email opens
                     } catch (error) {
