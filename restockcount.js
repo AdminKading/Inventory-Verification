@@ -29,6 +29,8 @@ window.onload = () => {
 
             let validDataFound = false;
             const tableRows = []; // Collect data for saving to Excel
+
+            // List of invalid names (converted to lowercase)
             const invalidNames = [
                 "Chainsaws",
                 "DeWalt Light",
@@ -46,14 +48,23 @@ window.onload = () => {
                 "Stihl bf-km",
                 "Stihl blowers",
                 "Weed Whips"
-            ];
+            ].map(name => name.toLowerCase());
+
+            // Process each row, skipping invalid data
             parsedData.slice(1).forEach((row, index) => {
-                const name = row["__EMPTY"];
+                const name = row["__EMPTY"]?.trim(); // Trim whitespace and handle undefined
                 const quantity = parseInt(row["__EMPTY_2"], 10);
                 const restock = parseInt(row["__EMPTY_3"], 10);
 
-                // Include only items with Quantity < Restock
-                if (!name || isNaN(quantity) || isNaN(restock) || quantity > restock || name.toLowerCase().startsWith('zz') || invalidNames.includes(name)) {
+                // Skip rows with invalid data
+                if (
+                    !name || 
+                    isNaN(quantity) || 
+                    isNaN(restock) || 
+                    quantity > restock || 
+                    name.toLowerCase().startsWith('zz') || 
+                    invalidNames.includes(name.toLowerCase()) // Compare in lowercase
+                ) {
                     return; // Skip invalid rows
                 }
 
@@ -61,7 +72,7 @@ window.onload = () => {
 
                 // Add the "NAME" column
                 const nameCell = document.createElement('td');
-                nameCell.textContent = name.trim(); // Ensure whitespace is trimmed
+                nameCell.textContent = name;
                 nameCell.style.padding = '10px'; // Add spacing to cells
                 tableRow.appendChild(nameCell);
 
@@ -78,7 +89,7 @@ window.onload = () => {
                 table.appendChild(tableRow);
 
                 // Save initial row data for Excel export
-                const rowData = { NAME: name.trim(), 'MANUAL QUANTITY': null };
+                const rowData = { NAME: name, 'MANUAL QUANTITY': null };
                 tableRows.push(rowData);
 
                 // Update the manual quantity value on input
@@ -123,7 +134,7 @@ window.onload = () => {
                         // Apply column widths to prevent text truncation
                         worksheet['!cols'] = [
                             { wch: 50 }, // Wider NAME column
-                            { wch: 20 }, // MANUAL QUANTITY column width
+                            { wch: 20 }  // MANUAL QUANTITY column width
                         ];
 
                         XLSX.utils.book_append_sheet(workbook, worksheet, 'Restock');
