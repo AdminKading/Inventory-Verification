@@ -179,52 +179,64 @@ window.onload = () => {
                     try {
                         // Re-sync manual quantities before generating the workbook
                         const allTableRows = document.querySelectorAll('table tr');
+                        const uniqueRows = new Map(); // Use a Map to filter out duplicate rows
+                
                         allTableRows.forEach((row, index) => {
                             if (index === 0) return; // Skip header row
                             const manualInput = row.querySelector('input[type="number"]');
-                            if (manualInput) {
-                                tableRows[index - 1]['MANUAL QUANTITY'] = manualInput.value ? parseFloat(manualInput.value) : null;
+                            const nameCell = row.querySelector('td:first-child'); // Assuming the first cell contains the NAME
+                
+                            if (nameCell) {
+                                const name = nameCell.textContent.trim();
+                                const manualQuantity = manualInput ? parseFloat(manualInput.value) || null : null;
+                
+                                // Avoid duplicates by using the NAME as a unique key
+                                if (!uniqueRows.has(name)) {
+                                    uniqueRows.set(name, {
+                                        NAME: name,
+                                        'MANUAL QUANTITY': manualQuantity
+                                    });
+                                }
                             }
                         });
-
+                
+                        const filteredTableRows = Array.from(uniqueRows.values()); // Convert Map back to array
+                
                         const shopName = parsedData.find(item => item["Inventory By Shop"]?.startsWith('Locations:'))
                             ?.[ "Inventory By Shop"].split(': ')[1]?.trim().replace(/\s+/g, '_') || 'Unknown_Shop'; // Replace spaces with underscores
                         const currentDate = new Date().toLocaleDateString().replace(/\//g, '-'); // Replace slashes with dashes for filename compatibility
-
+                
                         const workbook = XLSX.utils.book_new();
-                        const worksheet = XLSX.utils.json_to_sheet(tableRows, { header: headers });
-
+                        const worksheet = XLSX.utils.json_to_sheet(filteredTableRows);
+                
                         // Apply column widths to prevent text truncation
                         worksheet['!cols'] = [
                             { wch: 50 }, // Wider NAME column
                             { wch: 20 }  // MANUAL QUANTITY column width
                         ];
-
+                
                         XLSX.utils.book_append_sheet(workbook, worksheet, 'Restock');
                         const workbookBinary = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
                         const blob = new Blob([workbookBinary], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
+                
                         // Generate dynamic file name
                         const fileName = `${shopName}_Restock_Count_${currentDate}.xlsx`;
-
+                
                         // Create file download
                         const fileUrl = URL.createObjectURL(blob);
                         const downloadLink = document.createElement('a');
                         downloadLink.href = fileUrl;
                         downloadLink.download = fileName;
                         downloadLink.click();
+                
                         // Clear cookies
-                        document.cookie.split(';').forEach(cookie => {
-                            const eqPos = cookie.indexOf('=');
-                            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-                            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
-                        });
+                        clearCookies();
 
                         // Open email client after a slight delay
                         setTimeout(() => {
                             // Prepare email
                             const email = 'hill101779@gmail.com';
-                            const emailType = "Restock"; // You can adjust this dynamically if needed
+                            const emailType = "Inventory"; // You can adjust this dynamically if needed
                             const subject = `${shopName} | ${emailType} Count | ${currentDate}`;
                             const body = `
                         Hello,
