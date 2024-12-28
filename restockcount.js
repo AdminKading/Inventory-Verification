@@ -36,7 +36,7 @@ window.onload = () => {
                 const restock = parseInt(row["__EMPTY_3"], 10);
 
                 // Include only items with Quantity < Restock
-                if (!name || isNaN(quantity) || isNaN(restock) || quantity >= restock || name.toLowerCase().startsWith('zz')) {
+                if (!name || isNaN(quantity) || isNaN(restock) || quantity > restock || name.toLowerCase().startsWith('zz')) {
                     return; // Skip invalid rows
                 }
 
