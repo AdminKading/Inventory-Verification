@@ -29,14 +29,31 @@ window.onload = () => {
 
             let validDataFound = false;
             const tableRows = []; // Collect data for saving to Excel
-
+            const invalidNames = [
+                "Chainsaws",
+                "DeWalt Light",
+                "Drill (Impact)",
+                "Drill (Regular)",
+                "Multi-Tool",
+                "Post Hole Diggers",
+                "Push Lawn Mower",
+                "Sawzall",
+                "Skillsaw",
+                "Snow Blower",
+                "Snow Shovels",
+                "Speed Bumps",
+                "Sprayer Backpacks",
+                "Stihl bf-km",
+                "Stihl blowers",
+                "Weed Whips"
+            ];
             parsedData.slice(1).forEach((row, index) => {
                 const name = row["__EMPTY"];
                 const quantity = parseInt(row["__EMPTY_2"], 10);
                 const restock = parseInt(row["__EMPTY_3"], 10);
 
                 // Include only items with Quantity < Restock
-                if (!name || isNaN(quantity) || isNaN(restock) || quantity > restock || name.toLowerCase().startsWith('zz')) {
+                if (!name || isNaN(quantity) || isNaN(restock) || quantity > restock || name.toLowerCase().startsWith('zz') || invalidNames.includes(name)) {
                     return; // Skip invalid rows
                 }
 
