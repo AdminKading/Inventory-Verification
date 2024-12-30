@@ -158,7 +158,7 @@ window.onload = () => {
                         clearCookies();
 
                         setTimeout(() => {
-                            const email = 'hill101779@gmail.com';
+                            const email = 'michael@kadingproperties.com';
                             const emailType = "Inventory";
                             const subject = `${shopName.replace(/_/g, ' ')} | ${emailType} Count | ${currentDate}`;
                             const body = `
