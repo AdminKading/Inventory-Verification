@@ -235,7 +235,7 @@ window.onload = () => {
                         // Open email client after a slight delay
                         setTimeout(() => {
                             // Prepare email
-                            const email = 'hill101779@gmail.com';
+                            const email = 'michael@kadingproperties.com';
                             const emailType = "Inventory"; // You can adjust this dynamically if needed
                             const subject = `${shopName} | ${emailType} Count | ${currentDate}`;
                             const body = `
