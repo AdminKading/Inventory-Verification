@@ -17,12 +17,13 @@ window.onload = () => {
             table.border = '1';
 
             // Add table headers
-            const headers = ['NAME', 'MANUAL QUANTITY'];
+            const headers = ['NAME', 'QUANTITY ON HAND', 'MANUAL QUANTITY'];
             const headerRow = document.createElement('tr');
             headers.forEach(headerText => {
                 const th = document.createElement('th');
                 th.textContent = headerText;
                 th.style.padding = '10px'; // Add spacing to the header cells
+                th.style.fontSize = '16px';
                 th.style.textAlign = 'center'; // Center-align the header text
                 headerRow.appendChild(th);
             });
@@ -103,6 +104,12 @@ window.onload = () => {
                 nameCell.textContent = name;
                 nameCell.style.padding = '10px'; // Add spacing to cells
                 tableRow.appendChild(nameCell);
+
+                const quantityCell = document.createElement('td');
+                quantityCell.textContent = quantity;
+                quantityCell.style.padding = '10px';
+                quantityCell.style.textAlign = 'center'; // Center-align the text
+                tableRow.appendChild(quantityCell);
 
                 // Add the "MANUAL QUANTITY" column
                 const manualQuantityCell = document.createElement('td');
@@ -185,15 +192,18 @@ window.onload = () => {
                             if (index === 0) return; // Skip header row
                             const manualInput = row.querySelector('input[type="number"]');
                             const nameCell = row.querySelector('td:first-child'); // Assuming the first cell contains the NAME
+                            const quantityCell = row.querySelectorAll('td')[1];
                 
                             if (nameCell) {
                                 const name = nameCell.textContent.trim();
                                 const manualQuantity = manualInput ? parseFloat(manualInput.value) || null : null;
+                                const quantity = parseFloat(quantityCell.textContent.trim()) || 0;
                 
                                 // Avoid duplicates by using the NAME as a unique key
                                 if (!uniqueRows.has(name)) {
                                     uniqueRows.set(name, {
                                         NAME: name,
+                                        'QUANTITY ON HAND': parseFloat(quantity) || 0,
                                         'MANUAL QUANTITY': manualQuantity
                                     });
                                 }
@@ -212,7 +222,9 @@ window.onload = () => {
                         // Apply column widths to prevent text truncation
                         worksheet['!cols'] = [
                             { wch: 50 }, // Wider NAME column
+                            { wch: 20 },
                             { wch: 20 }  // MANUAL QUANTITY column width
+
                         ];
                 
                         XLSX.utils.book_append_sheet(workbook, worksheet, 'Restock');
@@ -235,8 +247,13 @@ window.onload = () => {
                         // Open email client after a slight delay
                         setTimeout(() => {
                             // Prepare email
+<<<<<<< HEAD
+                            const email = 'hill101779@gmail.com';
+                            const emailType = "Restock"; // You can adjust this dynamically if needed
+=======
                             const email = 'michael@kadingproperties.com';
                             const emailType = "Inventory"; // You can adjust this dynamically if needed
+>>>>>>> a4ce36c1239784d32f435ab9077537a5a1053c2b
                             const subject = `${shopName} | ${emailType} Count | ${currentDate}`;
                             const body = `
                         Hello,

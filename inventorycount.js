@@ -12,14 +12,17 @@ window.onload = () => {
             const table = document.createElement('table');
             table.border = '1';
 
-            const headers = ['NAME', 'QUANTITY', 'MANUAL QUANTITY'];
+            // Update headers to reflect "QUANTITY ON HAND"
+            const headers = ['NAME', 'QUANTITY ON HAND', 'MANUAL QUANTITY'];
             const headerRow = document.createElement('tr');
             headers.forEach(headerText => {
                 const th = document.createElement('th');
                 th.textContent = headerText;
                 th.style.padding = '10px';
+                th.style.fontSize = '16px';
                 th.style.textAlign = 'center';
                 headerRow.appendChild(th);
+                
             });
             table.appendChild(headerRow);
 
@@ -57,14 +60,15 @@ window.onload = () => {
             const tableRows = new Map(); // Use a Map for unique rows
             let validDataFound = false;
 
+            // Populate table rows
             parsedData.slice(1).forEach(row => {
                 const name = row["__EMPTY"]?.trim();
                 const quantity = parseInt(row["__EMPTY_2"], 10);
 
-                if (!name || isNaN(quantity) || name.toLowerCase().startsWith('zz')) return; // Skip invalid rows
+                if (!name || isNaN(quantity) || name.toLowerCase().startsWith('zz')) return;
 
                 if (!tableRows.has(name)) {
-                    const rowData = { NAME: name, QUANTITY: quantity, 'MANUAL QUANTITY': null };
+                    const rowData = { NAME: name, 'QUANTITY ON HAND': quantity, 'MANUAL QUANTITY': null };
                     tableRows.set(name, rowData);
                 }
 
@@ -74,6 +78,7 @@ window.onload = () => {
                 }
             });
 
+            // Add rows to the table
             tableRows.forEach((rowData, name) => {
                 const tableRow = document.createElement('tr');
 
@@ -83,7 +88,7 @@ window.onload = () => {
                 tableRow.appendChild(nameCell);
 
                 const quantityCell = document.createElement('td');
-                quantityCell.textContent = rowData.QUANTITY;
+                quantityCell.textContent = rowData['QUANTITY ON HAND'];
                 quantityCell.style.padding = '10px';
                 tableRow.appendChild(quantityCell);
 
@@ -139,11 +144,13 @@ window.onload = () => {
 
                         const workbook = XLSX.utils.book_new();
                         const worksheet = XLSX.utils.json_to_sheet(Array.from(tableRows.values()), { header: headers });
+
                         worksheet['!cols'] = [
                             { wch: 50 },
-                            { wch: 15 },
+                            { wch: 20 },
                             { wch: 20 }
                         ];
+
                         XLSX.utils.book_append_sheet(workbook, worksheet, 'Inventory');
                         const workbookBinary = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
                         const blob = new Blob([workbookBinary], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -171,7 +178,7 @@ window.onload = () => {
                             Visit: https://adminkading.github.io/Inventory-Verification/
 
                             Best regards,
-${shopName.replace(/_/g, ' ')}
+                            ${shopName.replace(/_/g, ' ')}
                             `.trim();
 
                             const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
