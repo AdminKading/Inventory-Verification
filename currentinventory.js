@@ -17,11 +17,14 @@ window.onload = () => {
             table.border = '1';
 
             // Add table headers
-            const headers = ['Name', 'Quantity'];
+            const headers = ['NAME', 'QUANTITY ON HAND'];
             const headerRow = document.createElement('tr');
             headers.forEach(headerText => {
                 const th = document.createElement('th');
                 th.textContent = headerText;
+                th.style.fontSize = '16px'; // Set font size for headers
+                th.style.padding = '10px'; // Add padding for better spacing
+                th.style.textAlign = 'center'; // Center-align header text
                 headerRow.appendChild(th);
             });
             table.appendChild(headerRow);
@@ -41,11 +44,15 @@ window.onload = () => {
                 // Add the "Name" column
                 const nameCell = document.createElement('td');
                 nameCell.textContent = name;
+                nameCell.style.fontSize = '16px'; // Set font size for NAME cells
+                nameCell.style.padding = '10px'; // Add padding for spacing
                 tableRow.appendChild(nameCell);
 
                 // Add the "Quantity" column
                 const quantityCell = document.createElement('td');
                 quantityCell.textContent = quantity;
+                quantityCell.style.fontSize = '16px'; // Set font size for QUANTITY ON HAND cells
+                quantityCell.style.padding = '10px'; // Add padding for spacing
                 tableRow.appendChild(quantityCell);
 
                 table.appendChild(tableRow);

@@ -18,36 +18,44 @@ body {
     width: 300px;
 }
 
-/* Title styling */
-h2 {
-    font-size: 24px;
-    margin-top: 80px; /* For larger screens */
-    margin-bottom: 20px;
-    color: white;
-    text-transform: uppercase;
-    font-weight: bold;
+/* Image styling */
+#kading {
+    display: block;
+    margin: 0 auto; /* Center the image horizontally */
+    max-width: 100%;
+    height: auto; /* Maintain aspect ratio */
+    margin-bottom: 20px; /* Add space below the image */
+    margin-top: 150px;
+    transition: transform 0.3s ease, filter 0.3s ease; /* Smooth transition for hover effects */
 }
+
+#kading:hover {
+    content: url('kading-gold.png'); /* Change the image source on hover */
+    transform: scale(1.1); /* Slight zoom effect */
+}
+
 
 /* Button styling */
 button {
     background-color: white;
     color: black;
     border: none;
-    padding: 10px 15px; /* Shortened buttons on the sides */
+    padding: 10px 15px;
     font-size: 16px;
     cursor: pointer;
     border-radius: 5px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s, transform 0.2s;
+    transition: color 0.3s, transform 0.2s; /* Transition for text color */
     margin: 10px 0;
     width: 100%;
 }
 
 button:hover {
-    background-color: #f1f1f1;
-    transform: scale(1.05);
+    color: #FFD700; /* Change only the text color of the button being hovered */
+    transform: scale(1.05); /* Slight zoom effect */
 }
 
+/* Button active state */
 button:active {
     background-color: #e0e0e0;
     transform: scale(0.98);
@@ -56,43 +64,51 @@ button:active {
 /* Version label styling */
 .version-label {
     position: absolute;
-    top: 10px; /* Adjusts the vertical positioning */
-    right: 10px; /* Adjusts the horizontal positioning */
+    top: 10px;
+    right: 10px;
     font-size: 14px;
     font-weight: bold;
     color: black;
-    background-color: #f0f0f0; /* Light gray background */
+    background-color: #f0f0f0;
     padding: 5px 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-    z-index: 10; /* Ensure it stays above other elements */
+    z-index: 10;
 }
 
 /* Mobile-specific adjustments */
 @media only screen and (max-width: 600px) {
     body {
         flex-direction: column;
-        padding: 0; /* Remove padding on mobile */
-        height: auto; /* Let the container control the height */
-        min-height: 100vh; /* Ensure the height is at least the viewport height */
-        overflow: hidden; /* Prevent scrolling */
+        padding: 0;
+        height: auto;
+        min-height: 100vh;
+        overflow: hidden;
     }
 
     .container {
-        width: 90%; /* Adjust the container to fit the screen better */
-        max-width: 300px; /* Limit the maximum width */
+        width: 90%;
+        max-width: 300px;
+    }
+    #kading {
+        display: block;
+        margin: 0 auto; /* Center the image horizontally */
+        max-width: 100%;
+        height: auto; /* Maintain aspect ratio */
+        margin-bottom: 20px; /* Add space below the image */
+        transition: transform 0.3s ease, filter 0.3s ease; /* Smooth transition for hover effects */
     }
 
     h2 {
-        font-size: 20px; /* Slightly smaller title font for mobile */
-        margin-top: -100px; /* Remove top margin on mobile */
+        font-size: 20px;
+        margin-top: 0;
     }
 
     button {
-        font-size: 14px; /* Reduce button font size for smaller screens */
-        padding: 8px 10px; /* Reduce button padding */
-        width: 100%; /* Ensure buttons remain responsive */
-        margin: 8px 0; /* Slightly smaller margin */
+        font-size: 14px;
+        padding: 8px 10px;
+        width: 100%;
+        margin: 8px 0;
     }
 }
