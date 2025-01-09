@@ -6,9 +6,10 @@ body {
     margin: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh; /* Full viewport height */
-    overflow: hidden; /* Prevent scrolling */
+    align-items: flex-start; /* Align content to the top for better scrolling */
+    height: auto; /* Allow the body height to adjust to content */
+    min-height: 100vh; /* Ensure minimum height of the viewport */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
 /* Container styling */
@@ -16,6 +17,7 @@ body {
     text-align: center;
     position: relative;
     width: 300px;
+    margin: 20px auto; /* Add vertical margin for better appearance */
 }
 
 /* Image styling */
@@ -25,7 +27,7 @@ body {
     max-width: 100%;
     height: auto; /* Maintain aspect ratio */
     margin-bottom: 20px; /* Add space below the image */
-    margin-top: 150px;
+    margin-top: 50px;
     transition: transform 0.3s ease, filter 0.3s ease; /* Smooth transition for hover effects */
 }
 
@@ -33,7 +35,6 @@ body {
     content: url('kading-gold.png'); /* Change the image source on hover */
     transform: scale(1.1); /* Slight zoom effect */
 }
-
 
 /* Button styling */
 button {
@@ -84,13 +85,14 @@ button:active {
         padding: 0;
         height: auto;
         min-height: 100vh;
-        overflow: hidden;
+        overflow-y: auto; /* Ensure scrolling on smaller devices */
     }
 
     .container {
         width: 90%;
         max-width: 300px;
     }
+
     #kading {
         display: block;
         margin: 0 auto; /* Center the image horizontally */

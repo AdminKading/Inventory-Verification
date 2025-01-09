@@ -5,6 +5,17 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
 }
+/* Styling for h2 element */
+h2 {
+    color: #FFD700; /* Gold color */
+    font-size: 20px; /* Smaller font size */
+    font-weight: bold;
+    text-align: center; /* Center text horizontally */
+    margin: 0 auto; /* Center the element itself */
+    position: relative;
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Adjust for perfect centering */
+}
 
 /* Exit button styling */
 #exit {
