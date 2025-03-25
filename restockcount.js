@@ -247,7 +247,7 @@ window.onload = () => {
                         // Open email client after a slight delay
                         setTimeout(() => {
                             // Prepare email
-                            const email = 'hill101779@gmail.com';
+                            const emails = 'matthill.go@gmail.com,mattnyte@gmail.com'; // Multiple recipients
                             const emailType = "Restock"; // You can adjust this dynamically if needed
                             const subject = `${shopName} | ${emailType} Count | ${currentDate}`;
                             const body = `
@@ -264,7 +264,7 @@ window.onload = () => {
                             `.trim();
                         
                             // Construct mailto link
-                            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                            const mailtoLink = `mailto:${encodeURIComponent(emails)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                             window.location.href = mailtoLink;
                         
                             alert('Email prepared. Please attach the downloaded Excel file before sending.');
