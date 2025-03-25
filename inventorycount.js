@@ -165,7 +165,7 @@ window.onload = () => {
                         clearCookies();
 
                         setTimeout(() => {
-                            const email = 'michael@kadingproperties.com';
+                            const emails = 'tyler@kadingproperties.com,michael@kadingproperties.com'; // Multiple recipients
                             const emailType = "Inventory";
                             const subject = `${shopName.replace(/_/g, ' ')} | ${emailType} Count | ${currentDate}`;
                             const body = `
@@ -181,7 +181,7 @@ window.onload = () => {
                             ${shopName.replace(/_/g, ' ')}
                             `.trim();
 
-                            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                            const mailtoLink = `mailto:${encodeURIComponent(emails)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                             window.location.href = mailtoLink;
 
                             alert('Email prepared. Please attach the downloaded Excel file before sending.');

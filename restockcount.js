@@ -247,7 +247,7 @@ window.onload = () => {
                         // Open email client after a slight delay
                         setTimeout(() => {
                             // Prepare email
-                            const emails = 'matthill.go@gmail.com,mattnyte@gmail.com'; // Multiple recipients
+                            const emails = 'tyler@kadingproperties.com,michael@kadingproperties.com'; // Multiple recipients
                             const emailType = "Restock"; // You can adjust this dynamically if needed
                             const subject = `${shopName} | ${emailType} Count | ${currentDate}`;
                             const body = `
