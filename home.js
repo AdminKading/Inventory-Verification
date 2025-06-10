@@ -10,7 +10,7 @@ window.onload = () => {
             const parsedData = JSON.parse(excelData);
             // Extract the shop name from the parsed data
             shopName = parsedData.find(item => item["Inventory By Shop"]?.startsWith('Locations:'))
-                ?.[ "Inventory Status"].split(': ')[1]?.trim() || 'Unknown_Shop';
+                ?.[ "Inventory Status"].split(': ')[1]?.trim() || 'Shop';
         } catch (error) {
             console.error('Error parsing Excel data:', error); 
 
