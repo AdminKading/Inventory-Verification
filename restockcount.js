@@ -86,15 +86,19 @@ window.onload = () => {
                 const restock = parseInt(row["__EMPTY_10"], 10);
 
                 // Skip rows with invalid data
-                if (
+               if (
                     !name || 
                     isNaN(quantity) || 
                     isNaN(restock) || 
                     quantity > restock || 
-                    name.toLowerCase().startsWith('zz') || invalidNames.includes(name.toLowerCase()) || name.toLowerCase().includes('do not use') || name.toLowerCase().includes('zzz'))  // Compare in lowercase
-                ) {
+                    name.toLowerCase().startsWith('zz') || 
+                    invalidNames.includes(name.toLowerCase()) || 
+                    name.toLowerCase().includes('do not use') || 
+                    name.toLowerCase().includes('zzz'))  // <- Unmatched closing )
+                {
                     return; // Skip invalid rows
                 }
+
 
                 const tableRow = document.createElement('tr');
 
