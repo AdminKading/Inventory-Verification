@@ -65,7 +65,7 @@ window.onload = () => {
                 const name = row["__EMPTY"]?.trim();
                 const quantity = parseInt(row["__EMPTY_9"], 10);
 
-                if (!name || isNaN(quantity) || name.toLowerCase().startsWith('zz')) return;
+                if (!name || isNaN(quantity) || name.toLowerCase().startsWith('zz') || name.toLowerCase().includes('do not use') || name.toLowerCase().includes('zzz')) ) return;
 
                 if (!tableRows.has(name)) {
                     const rowData = { NAME: name, 'QUANTITY ON HAND': quantity, 'MANUAL QUANTITY': null };
