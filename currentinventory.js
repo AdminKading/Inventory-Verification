@@ -35,7 +35,7 @@ window.onload = () => {
             // Skip the first row (header row) in parsedData
             parsedData.slice(1).forEach(row => {
                 const name = row["__EMPTY"];
-                const quantity = row["__EMPTY_2"];
+                const quantity = row["__EMPTY_9"];
                 if (!name || quantity == null || name === 'Name' || quantity === 'Quantity' || name.toLowerCase().startsWith('zz')) {
                     return; // Skip invalid rows
                 }
