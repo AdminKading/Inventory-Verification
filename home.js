@@ -9,11 +9,16 @@ window.onload = () => {
         try {
             const parsedData = JSON.parse(excelData);
             // Extract the shop name from the parsed data
-            shopName = parsedData.find(item => item["Inventory By Shop"]?.startsWith('Locations:'))
-                ?.[ "Inventory Status"].split(': ')[1]?.trim() || 'Shop';
+            const locationEntry = parsedData.find(item =>
+                item["Inventory Status"]?.startsWith('Locations:')
+            );
+            if (locationEntry) {
+                shopName = locationEntry["Inventory Status"].split(': ')[1]?.trim() || 'Shop';
+            }
         } catch (error) {
-            console.error('Error parsing Excel data:', error); 
-
+            console.error('Error parsing Excel data:', error);
+        }
+    }
 
     // Update the <h2> element with the shop name
     const titleElement = document.querySelector('h2');
