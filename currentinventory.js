@@ -36,7 +36,7 @@ window.onload = () => {
             parsedData.slice(1).forEach(row => {
                 const name = row["__EMPTY"];
                 const quantity = row["__EMPTY_9"];
-                if (!name || quantity == null || name === 'Name' || quantity === 'Quantity' || name.toLowerCase().startsWith('zz')) {
+                if (!name || quantity == null || name === 'Name' || quantity === 'Quantity' || name.toLowerCase().startsWith('zz') || name.toLowerCase().includes('do not use') || name.toLowerCase().includes('zzz')) {
                     return; // Skip invalid rows
                 }
                 const tableRow = document.createElement('tr');
