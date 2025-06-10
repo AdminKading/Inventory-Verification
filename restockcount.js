@@ -92,7 +92,7 @@ window.onload = () => {
                     isNaN(restock) || 
                     quantity > restock || 
                     name.toLowerCase().startsWith('zz') || 
-                    invalidNames.includes(name.toLowerCase()) // Compare in lowercase
+                    invalidNames.includes(name.toLowerCase() || || name.toLowerCase().includes('do not use') || name.toLowerCase().includes('zzz'))  // Compare in lowercase
                 ) {
                     return; // Skip invalid rows
                 }
