@@ -63,7 +63,7 @@ window.onload = () => {
             // Populate table rows
             parsedData.slice(1).forEach(row => {
                 const name = row["__EMPTY"]?.trim();
-                const quantity = parseInt(row["__EMPTY_2"], 10);
+                const quantity = parseInt(row["__EMPTY_9"], 10);
 
                 if (!name || isNaN(quantity) || name.toLowerCase().startsWith('zz')) return;
 
