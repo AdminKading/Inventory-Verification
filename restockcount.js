@@ -82,8 +82,8 @@ window.onload = () => {
             // Process each row, skipping invalid data
             parsedData.slice(1).forEach((row, index) => {
                 const name = row["__EMPTY"]?.trim(); // Trim whitespace and handle undefined
-                const quantity = parseInt(row["__EMPTY_2"], 10);
-                const restock = parseInt(row["__EMPTY_3"], 10);
+                const quantity = parseInt(row["__EMPTY_9"], 10);
+                const restock = parseInt(row["__EMPTY_10"], 10);
 
                 // Skip rows with invalid data
                 if (
