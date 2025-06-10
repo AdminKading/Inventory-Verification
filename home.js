@@ -8,13 +8,16 @@ window.onload = () => {
     if (excelData) {
         try {
             const parsedData = JSON.parse(excelData);
+
             // Extract the shop name from the parsed data
             const locationEntry = parsedData.find(item =>
                 item["Inventory Status"]?.startsWith('Locations:')
             );
+
             if (locationEntry) {
                 shopName = locationEntry["Inventory Status"].split(': ')[1]?.trim() || 'Shop';
             }
+
         } catch (error) {
             console.error('Error parsing Excel data:', error);
         }
@@ -34,5 +37,4 @@ window.onload = () => {
         });
     }
 };
-
 
