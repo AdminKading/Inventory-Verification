@@ -26,6 +26,8 @@ export const clearCookies = () => {
 };
 
 export const extractShopName = (data) => {
+    if (!data || !Array.isArray(data)) return 'Unknown_Shop';
+
     const locationEntry = data.find(item =>
         item["Inventory Status"]?.startsWith('Locations:')
     );
