@@ -5,20 +5,29 @@ const INVALID_NAMES = new Set([
     "stihl blowers", "weed whips"
 ]);
 
-export const filterValidRows = (rows) => {
+export const filterValidRows = (rows, mode = 'Inventory') => {
     return rows.slice(1).filter(row => {
         const name = row["__EMPTY"]?.trim().toLowerCase();
         const qty = parseInt(row["__EMPTY_9"], 10);
         const restock = parseInt(row["__EMPTY_10"], 10);
-        return (
+
+        // Basic validation
+        const isValidName = (
             name &&
             !INVALID_NAMES.has(name) &&
             !name.startsWith("zz") &&
             !name.includes("do not use") &&
-            !name.includes("zzz") &&
-            !isNaN(qty) &&
-            !isNaN(restock) &&
-            qty <= restock
+            !name.includes("zzz")
         );
+
+        const hasValidQty = !isNaN(qty);
+        const hasValidRestock = !isNaN(restock);
+
+        if (mode === 'Restock') {
+            return isValidName && hasValidQty && hasValidRestock && qty <= restock;
+        }
+
+        // For Inventory mode, we don't care about restock level
+        return isValidName && hasValidQty;
     });
 };
