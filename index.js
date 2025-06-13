@@ -3,7 +3,7 @@ document.querySelectorAll('.container button').forEach(button => {
         const shopName = event.target.getAttribute('data-shop');
 
         if (shopName) {
-            const fileName = `../Shop Files/${shopName.toLowerCase().replace(/\s+/g, '_')}.xlsx`;
+            const fileName = `Shop Files/${shopName.toLowerCase().replace(/\s+/g, '_')}.xlsx`;
 
 
             try {
