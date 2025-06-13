@@ -1,40 +1,20 @@
+import { getExcelData, extractShopName } from '../Common Files/data.js';
+
 window.onload = () => {
-    // Retrieve Excel data from localStorage
-    const excelData = localStorage.getItem('excelData');
-    console.log('Excel Data in Local Storage:', excelData); // Log the raw data
-
-    let shopName = 'Unknown_Shop'; // Default shop name
-
-    if (excelData) {
-        try {
-            const parsedData = JSON.parse(excelData);
-
-            // Extract the shop name from the parsed data
-            const locationEntry = parsedData.find(item =>
-                item["Inventory Status"]?.startsWith('Locations:')
-            );
-
-            if (locationEntry) {
-                shopName = locationEntry["Inventory Status"].split(': ')[1]?.trim() || 'Shop';
-            }
-
-        } catch (error) {
-            console.error('Error parsing Excel data:', error);
-        }
-    }
+    const data = getExcelData();
+    let shopName = extractShopName(data); // ✅ Centralized extraction logic
 
     // Update the <h2> element with the shop name
     const titleElement = document.querySelector('h2');
     if (titleElement) {
-        titleElement.textContent = `${shopName}`; // Update the text content
+        titleElement.textContent = `${shopName}`;
     }
 
     // Add event listener to Exit button
     const exitButton = document.getElementById('exit');
     if (exitButton) {
         exitButton.addEventListener('click', () => {
-            window.location.href = 'index.html'; // Redirect to index.html
+            window.location.href = '../index.html';
         });
     }
 };
-
