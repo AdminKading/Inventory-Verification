@@ -1,4 +1,4 @@
-import { getExcelData, clearCookies } from './data.js';
+import { getExcelData, clearCookies, extractShopName } from './data.js';
 import { filterValidRows } from './logic.js';
 import { createInventoryTable } from './ui.js';
 import { exportToExcel } from './exporter.js';
@@ -39,11 +39,11 @@ window.onload = () => {
     send.id = 'send';
     send.textContent = `Send ${mode} Count`;
     send.onclick = () => {
-        const shopName = data.find(row => row['Inventory By Shop'])?.['Inventory By Shop'].split(':')[1].trim().replace(/\s+/g, '_') || 'Unknown_Shop';
+        const shopName = extractShopName(data); // ✅ Use centralized logic
         exportToExcel(tableState.rows, shopName, mode);
 
         setTimeout(() => {
-            sendEmail(shopName, mode); // ✅ CLEAN CALL
+            sendEmail(shopName, mode);
         }, 800);
     };
 

@@ -1,4 +1,4 @@
-export const getExcelData = () => {
+export const getExcelData = () => { 
     const raw = localStorage.getItem('excelData');
     return raw ? JSON.parse(raw) : null;
 };
@@ -23,4 +23,14 @@ export const clearCookies = () => {
         const name = cookie.split('=')[0].trim();
         document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
     });
+};
+
+export const extractShopName = (data) => {
+    const locationEntry = data.find(item =>
+        item["Inventory Status"]?.startsWith('Locations:')
+    );
+
+    return locationEntry
+        ? locationEntry["Inventory Status"].split(': ')[1]?.trim().replace(/\s+/g, '_') || 'Unknown_Shop'
+        : 'Unknown_Shop';
 };
