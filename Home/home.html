@@ -8,27 +8,31 @@
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-    <nav class="navbar">
-        <a href="home.html" class="active">Home</a>
-        <a href="../Current Inventory/currentinventory.html">System Inventory</a>
-        <a href="../Inventory Count/inventorycount.html">Inventory Count</a>
-        <a href="../Restock Count/restockcount.html">Restock Count</a>
-    </nav>
-    <div class="content">
-        <p>
-            Click <strong>System Inventory</strong> to view the system inventory sourced from AppFolio.
-        </p>
-        <p>
-            Click <strong>Inventory Count</strong> to allow manual inventory audit that sends report to office via email.
-        </p>
-        <p>
-            Click <strong>Restock Count</strong> to allow inventory restock verification count that sends report to office via email.
-        </p>
+    <div id="main-content"> 
+        <nav class="navbar">
+            <a href="home.html" class="active">Home</a>
+            <a href="../Current Inventory/currentinventory.html">System Inventory</a>
+            <a href="../Inventory Count/inventorycount.html">Inventory Count</a>
+            <a href="../Restock Count/restockcount.html">Restock Count</a>
+        </nav>
+        <div class="content">
+            <p>
+                Click <strong>System Inventory</strong> to view the system inventory sourced from AppFolio.
+            </p>
+            <p>
+                Click <strong>Inventory Count</strong> to allow manual inventory audit that sends report to office via email.
+            </p>
+            <p>
+                Click <strong>Restock Count</strong> to allow inventory restock verification count that sends report to office via email.
+            </p>
+        </div>
+        <h2></h2>
+        <a href="../index.html" id="exit">SHOP</a>
     </div>
-    <h2></h2>
-    <a href="../index.html" id="exit">SHOP</a>
+    
 
     <!-- Load home.js as a module to allow ES6 imports -->
+     <script src="../Common Files/auth.js" defer></script> <!-- Load auth logic -->
     <script type="module" src="home.js"></script>
 </body>
 </html>

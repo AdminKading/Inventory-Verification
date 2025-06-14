@@ -1,60 +1,9 @@
-/* General styles */
 body {
     background-color: #696969;
     color: white;
     font-family: Arial, sans-serif;
     margin: 0;
 }
-/* Button container styling */
-.button-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-    margin-bottom: 60px;
-    gap: 20px; /* Space between the buttons */
-}
-
-/* Save For Later button styling */
-#reset {
-    background-color: red;
-    color: white;
-    padding: 15px 30px;
-    border: none;
-    border-radius: 20px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    max-width: 200px;
-}
-
-#reset:hover {
-    background-color: darkred;
-}
-
-
-/* Send button styling */
-#send {
-    background-color: green;
-    color: white;
-    padding: 15px 30px;
-    border: none;
-    border-radius: 20px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    max-width: 300px;
-    margin-left: 40px; /* Additional space to distinguish Send */
-}
-
-#send:hover {
-    background-color: darkgreen;
-}
-
 
 /* Navbar styling */
 .navbar {
@@ -99,124 +48,80 @@ body {
     pointer-events: none; /* Disable hover on the active page link */
 }
 
-/* Main container styling */
-.container {
-    text-align: center;
-    padding: 50px 20px;
-}
-
-/* Content section */
-.content {
+.button-container {
     display: flex;
     flex-direction: column;
+    margin: 30px auto 60px auto;
+    gap: 30px; /* vertical spacing between rows */
+    max-width: 400px;
+}
+
+.button-row {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    margin: 20px auto;
-    padding: 20px;
-    max-width: 800px;
-    line-height: 1.8;
-    position: relative;
+    gap: 20px;               /* horizontal space between text and button */
+    background-color: #505050; /* curved rectangle background */
+    padding: 15px 20px;
+    border-radius: 15px;
 }
 
-.content p {
-    background-color: #505050;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 10px 0;
-    text-align: center;
-    width: 100%;
+
+/* Text label styling */
+.button-label {
+    margin-left: 50px;
+    flex-shrink: 0;
+    width: 150px;
 }
 
-/* Table styling */
-table {
-    width: 80%; /* Slightly increased for three columns */
-    margin: 50px auto;
-    border-collapse: collapse;
-    border: 2px solid white;
-    border-radius: 10px;
-    overflow: hidden;
-    background-color: white;
-    color: black;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+/* Image button base styles */
+.image-button {
+    width: 80px;
+    height: 80px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    transition: filter 0.3s ease, transform 0.3s ease;
 }
 
-th, td {
-    padding: 15px;
-    text-align: center;
-    border: 1px solid #505050;
-    word-wrap: break-word; /* Ensure long text wraps properly */
+/* Hover effect */
+.image-button:hover {
+    transform: scale(1.05); /* Slight zoom effect */
 }
 
-th {
-    background-color: #505050;
-    color: white;
-    font-size: 18px;
-    text-transform: uppercase;
-    font-weight: bold;
+/* Specific button backgrounds */
+/* Replace these URLs with your actual image paths */
+#newFileBtn {
+    background-image: url('../images/newFile.png');
+}
+#newFileBtn:hover {
+    background-image: url('../images/newFile-gold.png');
 }
 
-td {
-    font-size: 16px;
+#listPngsBtn {
+    background-image: url('../images/list.png');
+}
+#listPngsBtn:hover {
+    background-image: url('../images/list-gold.png');
 }
 
-/* Manual Quantity input styling */
-td input[type="number"] {
-    width: 90%; /* Fit within the cell */
-    padding: 5px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-align: center;
-}
-
-/* Responsive Design */
-@media only screen and (max-width: 600px) {
-    .navbar {
-        flex-wrap: wrap;
+/* Responsive styles */
+@media (max-width: 500px) {
+    .button-container {
+        max-width: 90%;
     }
-
-    .navbar a {
-        flex: 1 1 50%;
-        text-align: center;
-        border-right: none;
+    .button-row {
+        gap: 12px;
     }
-
-    .navbar a:nth-child(odd) {
-        border-right: 1px solid black;
+    .button-label {
+        width: 100px;
+        font-size: 1rem;
     }
-
-    .button-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        max-width: 300px;
-        margin: 20px auto;
-    }
-
-    .button-grid a {
-        padding: 10px;
-        font-size: 14px;
-        border-radius: 5px;
-        background-color: #505050;
-        color: white;
-        border: 1px solid black;
-        text-decoration: none;
-
-        /* Fix uneven spacing */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Add bottom border explicitly for the first row (top buttons) */
-    .button-grid a:nth-child(1),
-    .button-grid a:nth-child(2) {
-        border-bottom: 2px solid black;
-    }
-
-    /* Ensure no bottom border for the bottom row buttons */
-    .button-grid a:nth-child(3),
-    .button-grid a:nth-child(4) {
-        border-bottom: none !important;
+    .image-button {
+        width: 120px;
+        height: 120px;
     }
 }
