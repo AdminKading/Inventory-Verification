@@ -22,7 +22,7 @@ window.handleInventoryData = function(data) {
 // Create a <script> tag to load JSONP data from Google Apps Script
 (function loadInventoryData() {
   const script = document.createElement('script');
-  script.src = 'https://script.google.com/macros/s/AKfycbz3q8LRpL5-CYQUwt5-jb2QAoikcS0eiDRYMBTDYNFIK8ZUMZNSq-7phmNQTdKxBnx_9A/exec?callback=handleInventoryData';
+  script.src = 'https://script.google.com/macros/s/AKfycbx9DyMKIjn3jz1RkM87gwDKrvI1NKuI2HhP8o_Fa3-Zg0-H08aUv-E6b-nJxs5m3FSkOg/exec';
   script.onerror = () => {
     console.error('Failed to fetch inventory data.');
     const container = document.getElementById('inventory-list');
