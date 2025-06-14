@@ -4,12 +4,17 @@ export function sendToGoogleDrive(blob, fileName) {
     reader.onload = () => {
         const base64Data = reader.result.split(',')[1];
 
-        fetch('https://script.google.com/macros/s/AKfycbybB2ERdFs4UMg1wQCYYoq_CPo35gbWqdZ3B8HMi_QurN09R8GJ3c1QfWQdw0-9AUk8-g/exec', { // ← Replace with your script URL
+        // Prepare form data
+        const formData = new URLSearchParams();
+        formData.append('filename', fileName);
+        formData.append('contents', base64Data);
+
+        fetch('https://script.google.com/macros/s/AKfycbzdhKlsbZBhir118EL4jyj35BFbsEG38XcYVXbgEMiImzExCbWk3BDt8sKnNpBjt_81LA/exec', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: base64Data
+            body: formData.toString()
         })
         .then(res => res.text())
         .then(msg => alert(msg))
