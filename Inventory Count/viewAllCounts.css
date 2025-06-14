@@ -34,81 +34,77 @@ body {
 }
 
 .navbar a:hover {
-    background-color: #707070; /* Slightly lighter than default */
-    color: #C0C0C0; /* Silver for hover text */
+    background-color: #707070;
+    color: #C0C0C0;
     border-radius: 5px;
 }
 
-/* Active page (Inventory Count) styling */
 .navbar a.active {
-    background-color: #404040; /* Slightly darker to indicate the active page */
-    color: #FFD700; /* Gold text for active page */
+    background-color: #404040;
+    color: #FFD700;
     font-weight: bold;
     border-radius: 5px;
-    pointer-events: none; /* Disable hover on the active page link */
+    pointer-events: none;
 }
 
+/* Inventory List Container */
+#inventory-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the grey bubbles */
+    gap: 30px;
+    padding: 30px 0;
+}
+
+/* Grey bubble section */
 .inventory-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background-color: #505050;
-  padding: 15px 20px;
-  border-radius: 15px;
-  margin-bottom: 30px;
+    width: 100%;
+    max-width: 400px;
+    background-color: #505050;
+    padding: 15px 20px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
+/* Month header styling */
 .inventory-month {
-  font-size: 1.2em;
-  font-weight: bold;
-  text-decoration: underline;
-  margin-bottom: 5px;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-decoration: underline;
+    margin-bottom: 5px;
 }
 
+/* File name links */
 .inventory-file {
-  color: #FFD700;
-  cursor: pointer;
-  text-decoration: none;
-  transition: color 0.2s;
+    color: #FFD700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.2s;
 }
 
 .inventory-file:hover {
-  color: #ffffff;
-  text-decoration: underline;
+    color: #ffffff;
+    text-decoration: underline;
 }
 
-
+/* Responsive styles for small screens */
 @media (max-width: 500px) {
-    .button-container {
-        max-width: 90%;
-    }
-
-    .button-row {
-        gap: 12px;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .button-label {
-        width: 100%;
-        font-size: 1rem;
-        margin-left: 0;
-    }
-
-    .image-button {
-        width: 100px;
-        height: 100px;
+    #inventory-list {
+        padding: 20px 10px;
+        gap: 20px;
     }
 
     .inventory-section {
-        padding: 12px 15px;
+        max-width: 90%;
+        padding: 12px 16px;
         border-radius: 12px;
-        gap: 8px;
+        gap: 6px;
     }
 
     .inventory-month {
         font-size: 1.1em;
-        text-align: left;
     }
 
     .inventory-file {
