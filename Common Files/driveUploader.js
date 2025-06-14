@@ -4,7 +4,7 @@ export function sendToGoogleDrive(blob, fileName) {
     reader.onload = () => {
         const base64Data = reader.result.split(',')[1];
 
-        fetch('https://script.google.com/macros/s/AKfycbyJqtnj4vPpNR0ILuAt5AykvAO1f0pciB8_BEDYmZqdQRH4vBdzbRZpepv-yPdCSoj0Xg/exec', { // ← Replace with your script URL
+        fetch('https://script.google.com/macros/s/AKfycbzPEB_YBtEeO7GtroEdP4k_iTzzrxl3infeeif7aMakLQbAsVFg_-MTQd-WWw8UH_xAvw/exec', { // ← Replace with your script URL
             method: 'POST',
             headers: {
                 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
