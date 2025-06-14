@@ -95,17 +95,17 @@ body {
 /* Specific button backgrounds */
 /* Replace these URLs with your actual image paths */
 #newFileBtn {
-    background-image: url('../images/newFile.png');
+    background-image: url('../Images/newFile.png');
 }
 #newFileBtn:hover {
-    background-image: url('../images/newFile-gold.png');
+    background-image: url('../Images/newFile-gold.png');
 }
 
 #listPngsBtn {
-    background-image: url('../images/list.png');
+    background-image: url('../Images/list.png');
 }
 #listPngsBtn:hover {
-    background-image: url('../images/list-gold.png');
+    background-image: url('../Images/list-gold.png');
 }
 
 /* Responsive styles */
