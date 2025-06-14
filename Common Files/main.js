@@ -2,12 +2,12 @@ import { getExcelData, clearCookies, extractShopName } from './data.js';
 import { filterValidRows } from './logic.js';
 import { createInventoryTable } from './ui.js';
 import { exportToExcel } from './exporter.js';
-import { sendEmail } from './emailSender.js'; // ✅ NEW IMPORT
+import { sendToGoogleDrive } from './driveUploader.js'; // ✅ For sending to Google Drive
 
 window.onload = () => {
     const mode = window.MODE || 'Inventory';
-
     const data = getExcelData();
+
     if (!data) {
         document.getElementById('inventory-container').innerText = 'No data found.';
         return;
@@ -39,12 +39,11 @@ window.onload = () => {
     send.id = 'send';
     send.textContent = `Send ${mode} Count`;
     send.onclick = () => {
-        const shopName = extractShopName(data); // ✅ Use centralized logic
-        exportToExcel(tableState.rows, shopName, mode);
+        const shopName = extractShopName(data);
 
-        setTimeout(() => {
-            sendEmail(shopName, mode);
-        }, 800);
+        // ✅ Get the Excel blob and send it to Google Drive
+        const blob = exportToExcel(tableState.rows, shopName, mode, true);
+        sendToGoogleDrive(blob, `${shopName}_${mode}_Count.xlsx`);
     };
 
     btnDiv.append(reset, send);
