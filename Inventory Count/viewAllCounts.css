@@ -1,114 +1,162 @@
 body {
-    background-color: #696969;
-    color: white;
-    font-family: Arial, sans-serif;
-    margin: 0;
+  background-color: #696969;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
 }
 
 /* Navbar styling */
 .navbar {
-    display: flex;
-    justify-content: center;
-    background-color: #505050;
-    padding: 10px 0;
-    border-bottom: 2px solid black;
-    margin: 0;
-    box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  background-color: #505050;
+  padding: 10px 0;
+  border-bottom: 2px solid black;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .navbar a {
-    color: white;
-    text-decoration: none;
-    padding: 10px;
-    margin: 0;
-    border-right: 1px solid black;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s, color 0.3s;
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  margin: 0;
+  border-right: 1px solid black;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .navbar a:last-child {
-    border-right: none;
+  border-right: none;
 }
 
 .navbar a:hover {
-    background-color: #707070;
-    color: #C0C0C0;
-    border-radius: 5px;
+  background-color: #707070;
+  color: #C0C0C0;
+  border-radius: 5px;
 }
 
 .navbar a.active {
-    background-color: #404040;
-    color: #FFD700;
-    font-weight: bold;
-    border-radius: 5px;
-    pointer-events: none;
+  background-color: #404040;
+  color: #FFD700;
+  font-weight: bold;
+  border-radius: 5px;
+  pointer-events: none;
 }
+
+h2 {
+  text-align: center;               /* Center the heading */
+  font-weight: 700;                 /* Bold font */
+  margin: 40px 0 40px 0;            /* Space above and below */
+}
+
 
 /* Inventory List Container */
 #inventory-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Center the grey bubbles */
-    gap: 30px;
-    padding: 30px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the grey bubbles */
+  gap: 30px;
+  padding: 30px 0;
 }
 
 /* Grey bubble section */
 .inventory-section {
-    width: 100%;
-    max-width: 400px;
-    background-color: #505050;
-    padding: 15px 20px;
-    border-radius: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  width: 100%;
+  max-width: 400px;
+  background-color: #505050;
+  padding: 15px 20px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 /* Month header styling */
 .inventory-month {
-    font-size: 1.2em;
-    font-weight: bold;
-    text-decoration: underline;
-    margin-bottom: 5px;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-decoration: underline;
+  margin-bottom: 5px;
 }
 
 /* File name links */
 .inventory-file {
-    color: #FFD700;
-    cursor: pointer;
-    text-decoration: none;
-    transition: color 0.2s;
+  color: #FFD700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
 .inventory-file:hover {
-    color: #ffffff;
-    text-decoration: underline;
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* Sorting and filtering controls */
+#sort-filter-controls {
+  max-width: 400px;
+  margin: 10px auto 20px auto;
+  text-align: center;
+  color: white;
+  font-size: 1rem;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+#sort-filter-controls > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#sort-filter-controls label {
+  min-width: 50px;
+  text-align: right;
+}
+
+#sort-filter-controls select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
 }
 
 /* Responsive styles for small screens */
 @media (max-width: 500px) {
-    #inventory-list {
-        padding: 20px 10px;
-        gap: 20px;
-    }
+  #inventory-list {
+    padding: 20px 10px;
+    gap: 20px;
+  }
 
-    .inventory-section {
-        max-width: 90%;
-        padding: 12px 16px;
-        border-radius: 12px;
-        gap: 6px;
-    }
+  .inventory-section {
+    max-width: 90%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    gap: 6px;
+  }
 
-    .inventory-month {
-        font-size: 1.1em;
-    }
+  .inventory-month {
+    font-size: 1.1em;
+  }
 
-    .inventory-file {
-        font-size: 0.95em;
-        word-break: break-word;
-    }
+  .inventory-file {
+    font-size: 0.95em;
+    word-break: break-word;
+  }
+
+  #sort-filter-controls {
+    max-width: 95%;
+    font-size: 0.9rem;
+  }
+
+  #sort-filter-controls label {
+    min-width: auto;
+    text-align: left;
+  }
 }
