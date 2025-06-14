@@ -1,36 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Count</title>
-    <link rel="stylesheet" href="createCount.css">
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inventory Count</title>
+
+  <link rel="stylesheet" href="createCount.css">
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 </head>
 
 <body>
-    <div id="main-content">
-        <nav class="navbar">
-            <a href="../Home/home.html">Home</a>
-            <a href="../Current Inventory/currentinventory.html">System Inventory</a>
-            <a href="inventoryCount.html" class="active">Inventory Count</a>
-            <a href="../Restock Count/restockcount.html">Restock Count</a>
-        </nav>
+  <div id="main-content">
+    <nav class="navbar">
+      <a href="../Home/home.html">Home</a>
+      <a href="../Current Inventory/currentinventory.html">System Inventory</a>
+      <a href="inventoryCount.html" class="active">Inventory Count</a>
+      <a href="../Restock Count/restockcount.html">Restock Count</a>
+    </nav>
 
-        <h2>Inventory Count Files by Month</h2>
-        <div id="inventory-list">Loading...</div>
-    </div>
+    <h2>Inventory Count Files by Month</h2>
+    <div id="inventory-list">Loading...</div>
+  </div>
 
+  <!-- MODE shared with other scripts -->
+  <script>
+    window.MODE = 'Inventory';
+  </script>
 
-    <!-- Set mode before loading shared logic -->
-    <script>
-        window.MODE = 'Inventory';
-    </script>
-    <script src="../Common Files/auth.js" defer></script>
-    <script type="module">
-        import { fetchInventoryCounts } from './getInventoryCounts.js';
-        fetchInventoryCounts();
-    </script>
+  <!-- Shared Auth Logic -->
+  <script src="../Common Files/auth.js" defer></script>
+
+  <!-- JSONP callback must be global (non-module) -->
+  <script>
+    window.handleInventoryData = function(data) {
+      const container = document.getElementById('inventory-list');
+      container.innerHTML = '';
+
+      for (const [month, files] of Object.entries(data)) {
+        const header = document.createElement('h3');
+        header.textContent = month;
+
+        const ul = document.createElement('ul');
+        files.forEach(filename => {
+          const li = document.createElement('li');
+          li.textContent = filename;
+          ul.appendChild(li);
+        });
+
+        container.appendChild(header);
+        container.appendChild(ul);
+      }
+    };
+
+    // JSONP fetch (must not be a module!)
+    const script = document.createElement('script');
+    script.src = 'https://script.google.com/macros/s/YOUR_DEPLOYED_WEBAPP_ID/exec?callback=handleInventoryData';
+    script.onerror = () => {
+      console.error('Failed to fetch inventory data.');
+      document.getElementById('inventory-list').textContent = 'Failed to load data.';
+    };
+    document.body.appendChild(script);
+  </script>
 </body>
 </html>
