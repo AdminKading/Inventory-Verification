@@ -1,25 +1,35 @@
-// This function is called by the JSONP response from the Google Apps Script Web App
+// Called by JSONP from Apps Script
 window.handleInventoryData = function(data) {
   const container = document.getElementById('inventory-list');
   container.innerHTML = '';
 
   for (const [month, files] of Object.entries(data)) {
-    const header = document.createElement('h3');
-    header.textContent = month;
+    const section = document.createElement('div');
+    section.className = 'inventory-section';
 
-    const ul = document.createElement('ul');
+    const monthHeader = document.createElement('div');
+    monthHeader.className = 'inventory-month';
+    monthHeader.textContent = month;
+    section.appendChild(monthHeader);
+
     files.forEach(filename => {
-      const li = document.createElement('li');
-      li.textContent = filename;
-      ul.appendChild(li);
+      const fileLink = document.createElement('a');
+      fileLink.className = 'inventory-file';
+      fileLink.textContent = filename;
+      fileLink.href = '#'; // You can replace this with actual file download URL logic if needed
+      fileLink.onclick = (e) => {
+        e.preventDefault();
+        alert(`You clicked on "${filename}"`);
+        // Optional: Implement download or navigation logic here
+      };
+      section.appendChild(fileLink);
     });
 
-    container.appendChild(header);
-    container.appendChild(ul);
+    container.appendChild(section);
   }
 };
 
-// Create a <script> tag to load JSONP data from Google Apps Script
+// Dynamically load JSONP from Apps Script
 (function loadInventoryData() {
   const script = document.createElement('script');
   script.src = 'https://script.google.com/macros/s/AKfycbx9DyMKIjn3jz1RkM87gwDKrvI1NKuI2HhP8o_Fa3-Zg0-H08aUv-E6b-nJxs5m3FSkOg/exec?callback=handleInventoryData';
