@@ -1,22 +1,18 @@
-window.handleInventoryData = function(data) {
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9DyMKIjn3jz1RkM87gwDKrvI1NKuI2HhP8o_Fa3-Zg0-H08aUv-E6b-nJxs5m3FSkOg/exec';
+
+window.handleInventoryData = function (data) {
   const container = document.getElementById('inventory-list');
   container.innerHTML = '';
 
-  const sortSelect = document.getElementById('sort-select');
-  const monthSelect = document.getElementById('month-select');
+  const sortOrder = document.getElementById('sort-select')?.value || 'asc';
+  const filterMonth = document.getElementById('month-select')?.value || 'All';
+  const filterYear = document.getElementById('year-select')?.value || 'All';
+
+  // Populate year select only once
   const yearSelect = document.getElementById('year-select');
-
-  const sortOrder = sortSelect ? sortSelect.value : 'desc';
-  const filterMonth = monthSelect ? monthSelect.value : 'All';
-  const filterYear = yearSelect ? yearSelect.value : 'All';
-
   if (yearSelect && yearSelect.options.length === 1) {
-    const years = new Set();
-    for (const key in data) {
-      const [, year] = key.split(' ');
-      years.add(year);
-    }
-    Array.from(years).sort().forEach(y => {
+    const years = new Set(Object.keys(data).map(key => key.split(' ')[1]));
+    [...years].sort().forEach(y => {
       const opt = document.createElement('option');
       opt.value = y;
       opt.textContent = y;
@@ -24,32 +20,29 @@ window.handleInventoryData = function(data) {
     });
   }
 
-  const filteredEntries = Object.entries(data).filter(([monthYear]) => {
+  // Filter files by month and year
+  const filtered = Object.entries(data).filter(([monthYear]) => {
     const [month, year] = monthYear.split(' ');
-    if (filterMonth !== 'All' && filterMonth !== month) return false;
-    if (filterYear !== 'All' && filterYear !== year) return false;
-    return true;
+    return (filterMonth === 'All' || month === filterMonth) &&
+           (filterYear === 'All' || year === filterYear);
   });
 
-  filteredEntries.sort((a, b) => {
-    const [monthA, yearA] = a[0].split(' ');
-    const [monthB, yearB] = b[0].split(' ');
-
-    const dateA = new Date(`${monthA} 1, ${yearA}`);
-    const dateB = new Date(`${monthB} 1, ${yearB}`);
-
+  // Sort by date (monthYear string parsed as date)
+  filtered.sort((a, b) => {
+    const dateA = new Date(`${a[0]} 1`);
+    const dateB = new Date(`${b[0]} 1`);
     return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
   });
 
-  if (filteredEntries.length === 0) {
-    const noResults = document.createElement('p');
-    noResults.textContent = 'No files found for the selected filter.';
-    noResults.style.color = 'lightgray';
-    container.appendChild(noResults);
+  if (filtered.length === 0) {
+    const msg = document.createElement('p');
+    msg.textContent = 'No files found for the selected filter.';
+    msg.style.color = 'lightgray';
+    container.appendChild(msg);
     return;
   }
 
-  filteredEntries.forEach(([monthYear, files]) => {
+  filtered.forEach(([monthYear, files]) => {
     const section = document.createElement('section');
     section.className = 'inventory-section';
 
@@ -59,27 +52,27 @@ window.handleInventoryData = function(data) {
     section.appendChild(header);
 
     files.forEach(filename => {
-      // Remove extension
-      let name = filename.replace(/\.[^/.]+$/, '');
-
-      // Split by underscore
-      let parts = name.split('_');
-
-      let displayName = '';
-
-      if (parts.length >= 5) {
-        const part1 = parts[0] + ' ' + parts[1];      // Adel Shop
-        const part2 = parts[2] + ' ' + parts[3];      // Inventory Count
-        const part3 = parts.slice(4).join(' ');       // date or other parts
-        displayName = `${part1} | ${part2} | ${part3}`;
-      } else {
-        displayName = parts.join(' ');
-      }
+      const original = filename;
+      // Format display name, example: Adel_Shop_Inventory_Count_04-02-2025.xlsx
+      const display = filename
+        .replace(/\.[^/.]+$/, '') // Remove extension
+        .split('_')
+        .reduce((acc, part, i) => {
+          if (i === 1 || i === 3) return acc + part + ' ';
+          if (i === 2 || i === 4) return acc.trim() + ' | ' + part + ' ';
+          return acc + part + ' ';
+        }, '')
+        .trim();
 
       const link = document.createElement('a');
       link.className = 'inventory-file';
-      link.href = '#'; // update if needed
-      link.textContent = displayName;
+      link.href = '#';
+      link.textContent = display;
+      link.onclick = (e) => {
+        e.preventDefault();
+        loadInventoryFile(original);
+      };
+
       section.appendChild(link);
     });
 
@@ -87,25 +80,45 @@ window.handleInventoryData = function(data) {
   });
 };
 
-window.addEventListener('DOMContentLoaded', () => {
-  const controls = ['sort-select', 'month-select', 'year-select'].map(id => document.getElementById(id));
+function loadInventoryFile(fileName) {
+  const callbackName = 'handleFileJson_' + Date.now();
 
-  controls.forEach(control => {
-    if (control) {
-      control.addEventListener('change', () => {
-        const oldScript = document.querySelector('script[data-jsonp-loader]');
-        if (oldScript) oldScript.remove();
+  window[callbackName] = function (json) {
+    if (json.error) {
+      alert('Error loading file: ' + json.error);
+    } else {
+      // Save JSON data to localStorage for viewCount.html
+      localStorage.setItem('excelData', JSON.stringify(json));
 
-        const script = document.createElement('script');
-        script.src = 'https://script.google.com/macros/s/AKfycbx9DyMKIjn3jz1RkM87gwDKrvI1NKuI2HhP8o_Fa3-Zg0-H08aUv-E6b-nJxs5m3FSkOg/exec?callback=handleInventoryData';
-        script.setAttribute('data-jsonp-loader', 'true');
-        document.body.appendChild(script);
-      });
+      // Redirect to view page
+      window.location.href = './viewCount.html';
     }
-  });
+    // Cleanup callback
+    delete window[callbackName];
+  };
+
+  // Load JSONP script
+  const script = document.createElement('script');
+  script.src = `${APPS_SCRIPT_URL}?filename=${encodeURIComponent(fileName)}&callback=${callbackName}`;
+  document.body.appendChild(script);
+}
+
+function refreshFileList() {
+  const oldScript = document.querySelector('script[data-jsonp-loader]');
+  if (oldScript) oldScript.remove();
 
   const script = document.createElement('script');
-  script.src = 'https://script.google.com/macros/s/AKfycbx9DyMKIjn3jz1RkM87gwDKrvI1NKuI2HhP8o_Fa3-Zg0-H08aUv-E6b-nJxs5m3FSkOg/exec?callback=handleInventoryData';
+  script.src = `${APPS_SCRIPT_URL}?callback=handleInventoryData`;
   script.setAttribute('data-jsonp-loader', 'true');
   document.body.appendChild(script);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  // Attach listeners for filters if they exist
+  ['sort-select', 'month-select', 'year-select'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', refreshFileList);
+  });
+
+  refreshFileList();
 });

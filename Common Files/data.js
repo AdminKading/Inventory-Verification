@@ -1,4 +1,17 @@
-export const getExcelData = () => { 
+// Holds the loaded Excel data for access by getExcelData()
+let cachedExcelData = null;
+
+// Called to set the Excel JSON data when loaded asynchronously (e.g., JSONP)
+export const setExcelData = (data) => {
+    cachedExcelData = data;
+};
+
+// Returns the currently loaded Excel JSON data
+export const getExcelData = () => {
+    // If we have cached JSONP data, use it
+    if (cachedExcelData) return cachedExcelData;
+
+    // Otherwise, fallback to localStorage
     const raw = localStorage.getItem('excelData');
     return raw ? JSON.parse(raw) : null;
 };

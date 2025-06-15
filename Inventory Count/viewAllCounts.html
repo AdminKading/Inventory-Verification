@@ -19,8 +19,6 @@
       <a href="../Restock Count/restockcount.html">Restock Count</a>
     </nav>
 
-    <h2>Inventory Count Files</h2>
-
     <!-- Sorting and filtering controls -->
     <div id="sort-filter-controls">
       <div>
@@ -62,15 +60,14 @@
     <div id="inventory-list">Loading...</div>
   </div>
 
-  <!-- MODE shared with other scripts -->
   <script>
     window.MODE = 'Inventory';
   </script>
 
-  <!-- Shared Auth Logic -->
+  <!-- Auth logic (if needed) -->
   <script src="../Common Files/auth.js" defer></script>
 
-  <!-- Inventory Loader JS -->
-  <script src="./jsonpInventoryLoader.js"></script>
+  <!-- Inventory loader script -->
+  <script src="./jsonpInventoryLoader.js" defer></script>
 </body>
 </html>

@@ -47,11 +47,6 @@ body {
   pointer-events: none;
 }
 
-h2 {
-  text-align: center;               /* Center the heading */
-  font-weight: 700;                 /* Bold font */
-  margin: 40px 0 40px 0;            /* Space above and below */
-}
 
 
 /* Inventory List Container */
@@ -68,7 +63,7 @@ h2 {
   width: 100%;
   max-width: 400px;
   background-color: #505050;
-  padding: 15px 20px;
+  padding: 10px 20px;
   border-radius: 15px;
   display: flex;
   flex-direction: column;
@@ -89,6 +84,7 @@ h2 {
   cursor: pointer;
   text-decoration: none;
   transition: color 0.2s;
+  margin-bottom: 15px;
 }
 
 .inventory-file:hover {
@@ -99,13 +95,16 @@ h2 {
 /* Sorting and filtering controls */
 #sort-filter-controls {
   max-width: 400px;
-  margin: 10px auto 20px auto;
+  margin: 50px auto 10px auto;
+  background-color: #505050;
+  padding: 30px 20px;
+  border-radius: 15px;
   text-align: center;
   color: white;
   font-size: 1rem;
   display: flex;
   gap: 12px;
-  justify-content: center;
+  justify-content: left;
   flex-wrap: wrap;
 }
 

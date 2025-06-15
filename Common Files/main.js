@@ -4,6 +4,8 @@ import { createInventoryTable } from './ui.js';
 import { exportToExcel } from './exporter.js';
 import { sendToGoogleDrive } from './driveUploader.js'; // ✅ For sending to Google Drive
 
+window.READ_ONLY = true; // Set this to true for read-only manual quantity
+
 window.onload = () => {
     const mode = window.MODE || 'Inventory';
     const data = getExcelData();
@@ -17,9 +19,10 @@ window.onload = () => {
     const container = document.getElementById('inventory-container');
     const tableState = { rows: [] };
 
+    // Pass readOnly flag here:
     const { table, tableRows } = createInventoryTable(validRows, mode, (index, value) => {
         tableRows[index]['MANUAL QUANTITY'] = value;
-    });
+    }, window.READ_ONLY);
 
     tableState.rows = tableRows;
     container.appendChild(table);
