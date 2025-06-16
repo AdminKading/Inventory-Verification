@@ -8,7 +8,7 @@ export function sendToGoogleDrive(blob, fileName) {
         formData.append('filename', fileName);
         formData.append('contents', base64Data);
 
-        fetch('https://script.google.com/macros/s/AKfycbyroNBuMDq9SBL4LWG6h729qD6j_d5YhBtmfVAsB_wsL5tUgwSkzWguAy2wOicqUyaG7Q/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbxshD-YHmYP6s63cLnwA2aK90O_rBMaM9FQCg6MdQw8a5rPyoYv7I9HCIQyYDEHVGW8pw/exec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
