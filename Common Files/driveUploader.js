@@ -4,12 +4,11 @@ export function sendToGoogleDrive(blob, fileName) {
     reader.onload = () => {
         const base64Data = reader.result.split(',')[1];
 
-        // Prepare form data
         const formData = new URLSearchParams();
         formData.append('filename', fileName);
         formData.append('contents', base64Data);
 
-        fetch('https://script.google.com/macros/s/AKfycbzdhKlsbZBhir118EL4jyj35BFbsEG38XcYVXbgEMiImzExCbWk3BDt8sKnNpBjt_81LA/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbyroNBuMDq9SBL4LWG6h729qD6j_d5YhBtmfVAsB_wsL5tUgwSkzWguAy2wOicqUyaG7Q/exec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -21,5 +20,5 @@ export function sendToGoogleDrive(blob, fileName) {
         .catch(err => alert('Upload failed: ' + err));
     };
 
-    reader.readAsDataURL(blob); // Convert blob to base64
+    reader.readAsDataURL(blob);
 }
