@@ -4,8 +4,6 @@ import { createInventoryTable } from './ui.js';
 import { exportToExcel } from './exporter.js';
 import { sendToGoogleDrive } from './driveUploader.js'; // ✅ For sending to Google Drive
 
-window.READ_ONLY = true; // Set this to true for read-only manual quantity
-
 window.onload = () => {
     const mode = window.MODE || 'Inventory';
     const data = getExcelData();
@@ -19,10 +17,9 @@ window.onload = () => {
     const container = document.getElementById('inventory-container');
     const tableState = { rows: [] };
 
-    // Pass readOnly flag here:
-    const { table, tableRows } = createInventoryTable(validRows, mode, (index, value) => {
+    const { table, tableRows } = createInventoryTable(validRows, (index, value) => {
         tableRows[index]['MANUAL QUANTITY'] = value;
-    }, window.READ_ONLY);
+    }, false);
 
     tableState.rows = tableRows;
     container.appendChild(table);
@@ -44,9 +41,11 @@ window.onload = () => {
     send.onclick = () => {
         const shopName = extractShopName(data);
 
-        // ✅ Get the Excel blob and send it to Google Drive
+        // Generate the Excel blob for the current data
         const blob = exportToExcel(tableState.rows, shopName, mode, true);
-        sendToGoogleDrive(blob, `${shopName}_${mode}_Count.xlsx`);
+
+        // Send blob to Google Drive with separate shopName and mode params (filename will be generated server-side)
+        sendToGoogleDrive(blob, shopName, mode);
     };
 
     btnDiv.append(reset, send);
