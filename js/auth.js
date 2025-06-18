@@ -1,91 +1,125 @@
-// Holds the loaded Excel data for access by getExcelData()
-let cachedExcelData = null;
+document.addEventListener("DOMContentLoaded", () => {
+  const validPasswords = ["adminpassword", "clientpassword"];
+  const savedPassword = getCookie("userpass");
 
-/**
- * Sets the Excel JSON data (e.g., from JSONP or localStorage)
- * @param {Array|Object} data 
- */
-export const setExcelData = (data) => {
-    cachedExcelData = data;
-};
+  console.log("DOMContentLoaded fired");
+  console.log("Saved password cookie:", savedPassword);
 
-/**
- * Returns the currently loaded Excel JSON data
- * @returns {Array|Object|null}
- */
-export const getExcelData = () => {
-    if (cachedExcelData) return cachedExcelData;
-    const raw = localStorage.getItem('excelData');
-    return raw ? JSON.parse(raw) : null;
-};
+  const content = document.getElementById("main-content");
+  if (content) content.style.display = "none";
 
-/**
- * Sets a cookie with a specific key, value, and expiry in days
- * @param {string} key 
- * @param {string|number} value 
- * @param {number} days 
- */
-export const setCookie = (key, value, days) => {
-    if (!key.startsWith('InventoryCount_') && !key.startsWith('RestockCount_') &&
-        key !== 'userpass' && key !== 'authToken') {
-        console.warn(`Warning: setCookie called with unprefixed key: "${key}"`);
+  if (!validPasswords.includes(savedPassword)) {
+    console.log("No valid cookie, showing prompt");
+    showPasswordPrompt();
+  } else {
+    console.log("Valid cookie, showing content");
+    if (content) content.style.display = "block";
+  }
+});
+
+function setCookie(name, value) {
+  const expires = new Date();
+  expires.setFullYear(expires.getFullYear() + 10);
+  document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/`;
+}
+
+function getCookie(name) {
+  const cookies = document.cookie.split(';');
+  for (let cookie of cookies) {
+    const [key, val] = cookie.trim().split('=');
+    if (key === name) return val;
+  }
+  return null;
+}
+
+function showPasswordPrompt() {
+  console.log("showPasswordPrompt called");
+
+  if (document.getElementById("password-modal")) return;
+
+  const modal = document.createElement("div");
+  modal.id = "password-modal";
+  Object.assign(modal.style, {
+    position: "fixed",
+    top: "0",
+    left: "0",
+    width: "100vw",
+    height: "100vh",
+    backgroundColor: "rgba(0,0,0,0.6)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: "10000",
+  });
+
+  const box = document.createElement("div");
+  Object.assign(box.style, {
+    backgroundColor: "#ffffff",
+    padding: "30px",
+    borderRadius: "10px",
+    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)",
+    maxWidth: "90%",
+    width: "350px",
+    textAlign: "center",
+    fontFamily: "Arial, sans-serif",
+  });
+
+  box.innerHTML = `
+    <h2 style="margin-bottom: 20px; color: #222;">Enter Password</h2>
+    <input type="password" id="modal-password" placeholder="Password" style="
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    " />
+    <button id="submit-password" style="
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    ">Submit</button>
+  `;
+
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+
+  document.getElementById("submit-password").addEventListener("click", () => {
+    const input = document.getElementById("modal-password").value;
+    console.log("Password entered:", input);
+
+    if (["adminpassword", "clientpassword"].includes(input)) {
+      console.log("Correct password");
+      setCookie("userpass", input);
+      modal.remove();
+      const content = document.getElementById("main-content");
+      if (content) content.style.display = "block";
+    } else {
+      console.log("Incorrect password");
+      alert("Incorrect password.");
     }
-    const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = `${key}=${value};expires=${date.toUTCString()};path=/`;
-};
+  });
+}
 
-/**
- * Gets the value of a cookie by key
- * @param {string} key 
- * @returns {string|null}
- */
-export const getCookie = (key) => {
-    const cookies = document.cookie.split(';');
-    for (let cookie of cookies) {
-        const [k, v] = cookie.trim().split('=');
-        if (k === key) return v;
-    }
-    return null;
-};
+// ✅ Modular access-checking functions
 
-/**
- * Clears cookies based on mode (e.g. "Inventory" or "Restock")
- * @param {string} mode 
- */
-export const clearCookies = (mode) => {
-    const prefix = mode + "Count_";
-    clearCookiesByPrefix(prefix);
-};
+function hasAdminAccess() {
+  return getCookie("userpass") === "adminpassword";
+}
 
-/**
- * Clears cookies with a specific prefix
- * @param {string} prefix 
- */
-export const clearCookiesByPrefix = (prefix) => {
-    document.cookie.split(';').forEach(cookie => {
-        const name = cookie.split('=')[0].trim();
-        if (name === "userpass" || name === "authToken") return;
-        if (name.startsWith(prefix)) {
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
-        }
-    });
-};
+function hasClientAccess() {
+  const pass = getCookie("userpass");
+  return ["adminpassword", "clientpassword"].includes(pass);
+}
 
-/**
- * Extracts the shop name from the loaded data, defaulting if missing.
- * Replaces spaces with underscores.
- * @param {Array} data 
- * @returns {string}
- */
-export const extractShopName = (data) => {
-    if (!data || !Array.isArray(data)) return 'Unknown_Shop';
-
-    const locationEntry = data.find(item =>
-        item["Inventory Status"]?.startsWith('Locations:')
-    );
-
-    return locationEntry
-        ? locationEntry["Inventory Status"].split(': ')[1]?.trim().replace(/\s+/g, '_') || 'Unknown_Shop'
-        : 'Unknown_Shop';
-};
+// Make globally accessible
+window.hasAdminAccess = hasAdminAccess;
+window.hasClientAccess = hasClientAccess;
+window.showPasswordPrompt = showPasswordPrompt;
