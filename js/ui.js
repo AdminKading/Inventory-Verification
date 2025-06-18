@@ -48,10 +48,10 @@ export function createInventoryTable(rows, onManualUpdate = null, readOnly = fal
       input.value = manualValue;
       input.id = `manual-${index}`;
 
-      // Set cookie on user input change here only
+      // Set cookie on user input change here only, expires in 2 hours
       input.addEventListener('input', (e) => {
         const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
-        setCookie(cookiePrefix + name, value, 365);
+        setCookie(cookiePrefix + name, value, 2); // 2 hours expiry
         onManualUpdate?.(index, value);
       });
 

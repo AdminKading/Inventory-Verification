@@ -20,20 +20,21 @@ export const getExcelData = () => {
 };
 
 /**
- * Sets a cookie with a specific key, value, and expiry in days
+ * Sets a cookie with a specific key, value, and expiry in hours
  * @param {string} key 
  * @param {string|number} value 
- * @param {number} days 
+ * @param {number} hours 
  */
-export const setCookie = (key, value, days) => {
+export const setCookie = (key, value, hours) => {
     if (!key.startsWith('InventoryCount_') && !key.startsWith('RestockCount_') &&
         key !== 'userpass' && key !== 'authToken') {
         console.warn(`Warning: setCookie called with unprefixed key: "${key}"`);
     }
     const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    date.setTime(date.getTime() + hours * 60 * 60 * 1000); // convert hours to ms
     document.cookie = `${key}=${value};expires=${date.toUTCString()};path=/`;
 };
+
 
 /**
  * Gets the value of a cookie by key
