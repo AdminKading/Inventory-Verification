@@ -74,7 +74,7 @@ window.handleInventoryData = function (data) {
           if (downloadWindow) {
             setTimeout(() => {
               downloadWindow.close();
-            }, 5000); // close after 1.5 seconds
+            }, 30000); // close after 5 seconds
           } else {
             alert('Pop-up blocked! Please allow pop-ups for this site to download files.');
           }
