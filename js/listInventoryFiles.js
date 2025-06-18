@@ -69,7 +69,15 @@ window.handleInventoryData = function (data) {
         e.preventDefault();
 
         if (typeof hasAdminAccess === 'function' && hasAdminAccess()) {
-          window.open(`${APPS_SCRIPT_URL}?filename=${encodeURIComponent(filename)}&mode=${encodeURIComponent(mode)}&download=true`, '_blank');
+          const downloadUrl = `${APPS_SCRIPT_URL}?filename=${encodeURIComponent(filename)}&mode=${encodeURIComponent(mode)}&download=true`;
+          const downloadWindow = window.open(downloadUrl, '_blank');
+          if (downloadWindow) {
+            setTimeout(() => {
+              downloadWindow.close();
+            }, 5000); // close after 1.5 seconds
+          } else {
+            alert('Pop-up blocked! Please allow pop-ups for this site to download files.');
+          }
         } else {
           alert('You do not have permission to download this file. Please log in as an admin.');
           if (typeof showPasswordPrompt === 'function') showPasswordPrompt();
