@@ -1,162 +1,165 @@
 body {
-    background-color: #696969;
-    color: white;
-    font-family: Arial, sans-serif;
-    margin: 0;
+  background-color: #696969;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
 }
 
 /* Navbar styling */
 .navbar {
-    display: flex;
-    justify-content: center;
-    background-color: #505050;
-    padding: 10px 0;
-    border-bottom: 2px solid black;
-    margin: 0;
-    box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  background-color: #505050;
+  padding: 10px 0;
+  border-bottom: 2px solid black;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .navbar a {
-    color: white;
-    text-decoration: none;
-    padding: 10px;
-    margin: 0;
-    border-right: 1px solid black;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s, color 0.3s;
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  margin: 0;
+  border-right: 1px solid black;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .navbar a:last-child {
-    border-right: none;
+  border-right: none;
 }
 
 .navbar a:hover {
-    background-color: #707070; /* Slightly lighter than default */
-    color: #C0C0C0; /* Silver for hover text */
-    border-radius: 5px;
+  background-color: #707070;
+  color: #C0C0C0;
+  border-radius: 5px;
 }
 
-/* Active page (Inventory Count) styling */
+/* Active link */
 .navbar a.active {
-    background-color: #404040; /* Slightly darker to indicate the active page */
-    color: #FFD700; /* Gold text for active page */
-    font-weight: bold;
-    border-radius: 5px;
-    pointer-events: none; /* Disable hover on the active page link */
+  background-color: #404040;
+  color: #FFD700;
+  font-weight: bold;
+  border-radius: 5px;
+  pointer-events: none;
 }
 
+/* Button container styles */
 .button-container {
-    display: flex;
-    flex-direction: column;
-    margin: 50px auto 60px auto;
-    gap: 30px; /* vertical spacing between rows */
-    max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  margin: 50px auto 60px auto;
+  gap: 30px;
+  max-width: 400px;
 }
 
 .button-row {
-    display: flex;
-    align-items: center;
-    gap: 20px;               /* horizontal space between text and button */
-    background-color: #505050; /* curved rectangle background */
-    padding: 15px 20px;
-    border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background-color: #505050;
+  padding: 15px 20px;
+  border-radius: 15px;
 }
 
-
-/* Text label styling */
+/* Label styling */
 .button-label {
-    margin-left: 50px;
-    flex-shrink: 0;
-    width: 150px;
+  margin-left: 50px;
+  flex-shrink: 0;
+  width: 150px;
 }
 
-/* Image button base styles */
+/* Clickable + hover style for labels */
+.clickable-label {
+  cursor: pointer;
+  color: white;
+  transition: color 0.3s;
+}
+.clickable-label:hover {
+  color: #FFD700; /* Gold hover like active link */
+}
+
+/* Image button styles */
 .image-button {
-    width: 80px;
-    height: 80px;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: transparent;
-    transition: filter 0.3s ease, transform 0.3s ease;
+  width: 80px;
+  height: 80px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  transition: filter 0.3s ease, transform 0.3s ease;
 }
 
-/* Hover effect */
 .image-button:hover {
-    transform: scale(1.05); /* Slight zoom effect */
+  transform: scale(1.05);
 }
 
-/* Specific button backgrounds */
-/* Replace these URLs with your actual image paths */
+/* Button background images */
 #newFileBtn {
-    background-image: url('../Images/newFile.png');
+  background-image: url('../Images/newFile.png');
 }
 #newFileBtn:hover {
-    background-image: url('../Images/newFile-gold.png');
+  background-image: url('../Images/newFile-gold.png');
 }
 
 #listPngsBtn {
-    background-image: url('../Images/list.png');
+  background-image: url('../Images/list.png');
 }
 #listPngsBtn:hover {
-    background-image: url('../Images/list-gold.png');
+  background-image: url('../Images/list-gold.png');
 }
 
-/* Responsive styles */
+/* Mobile adjustments */
 @media only screen and (max-width: 600px) {
-    .navbar {
-        flex-wrap: wrap;
-    }
+  .navbar {
+    flex-wrap: wrap;
+  }
 
-    .navbar a {
-        flex: 1 1 50%;
-        text-align: center;
-        border-right: none;
-    }
+  .navbar a {
+    flex: 1 1 50%;
+    text-align: center;
+    border-right: none;
+  }
 
-    .navbar a:nth-child(odd) {
-        border-right: 1px solid black;
-    }
+  .navbar a:nth-child(odd) {
+    border-right: 1px solid black;
+  }
 
-    .button-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        max-width: 300px;
-        margin: 20px auto;
-    }
+  .button-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    max-width: 300px;
+    margin: 20px auto;
+  }
 
-    .button-grid a {
-        padding: 10px;
-        font-size: 14px;
-        border-radius: 5px;
-        background-color: #505050;
-        color: white;
-        border: 1px solid black;
-        text-decoration: none;
+  .button-grid a {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    background-color: #505050;
+    color: white;
+    border: 1px solid black;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-        /* Fix uneven spacing */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+  .button-grid a:nth-child(1),
+  .button-grid a:nth-child(2) {
+    border-bottom: 2px solid black;
+  }
 
-    /* Add bottom border explicitly for the first row (top buttons) */
-    .button-grid a:nth-child(1),
-    .button-grid a:nth-child(2) {
-        border-bottom: 2px solid black;
-    }
-
-    /* Ensure no bottom border for the bottom row buttons */
-    .button-grid a:nth-child(3),
-    .button-grid a:nth-child(4) {
-        border-bottom: none !important;
-    }
+  .button-grid a:nth-child(3),
+  .button-grid a:nth-child(4) {
+    border-bottom: none !important;
+  }
 }
-

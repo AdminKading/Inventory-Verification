@@ -16,27 +16,24 @@
       <a id="inventoryLink" href="./count.html?mode=Inventory">Inventory Count</a>
       <a id="restockLink" href="./count.html?mode=Restock">Restock Count</a>
     </nav>
-    
+
     <!-- Image Buttons container -->
     <div class="button-container">
-        <div class="button-row">
-            <span class="button-label"><strong>Create Count</strong></span>
-            <button id="newFileBtn" class="image-button" aria-label="New File"></button>
-        </div>
-        <div class="button-row">
-            <span class="button-label"><strong>View Counts</strong></span>
-            <button id="listPngsBtn" class="image-button" aria-label="List PNGs"></button>
-        </div>
-        </div>
-
+      <div class="button-row">
+        <span class="button-label clickable-label" id="createCountLabel"><strong>Create Count</strong></span>
+        <button id="newFileBtn" class="image-button" aria-label="New File"></button>
+      </div>
+      <div class="button-row">
+        <span class="button-label clickable-label" id="viewCountsLabel"><strong>View Counts</strong></span>
+        <button id="listPngsBtn" class="image-button" aria-label="List PNGs"></button>
+      </div>
+    </div>
   </div>
 
-  <!-- Set mode before loading shared logic -->
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     window.MODE = urlParams.get("mode") || "Inventory";
 
-    // Set active class based on mode
     document.addEventListener("DOMContentLoaded", () => {
       if (window.MODE === "Restock") {
         document.getElementById("restockLink").classList.add("active");
@@ -44,17 +41,21 @@
         document.getElementById("inventoryLink").classList.add("active");
       }
 
-      document.getElementById("newFileBtn").onclick = () => {
+      const goToCreate = () => {
         window.location.href = `createCount.html?mode=${window.MODE}`;
       };
-      document.getElementById("listPngsBtn").onclick = () => {
+      const goToView = () => {
         window.location.href = `viewAllCounts.html?mode=${window.MODE}`;
       };
+
+      document.getElementById("newFileBtn").onclick = goToCreate;
+      document.getElementById("createCountLabel").onclick = goToCreate;
+
+      document.getElementById("listPngsBtn").onclick = goToView;
+      document.getElementById("viewCountsLabel").onclick = goToView;
     });
   </script>
 
-
   <script type="module" src="../js/auth.js" defer></script>
-
 </body>
 </html>
