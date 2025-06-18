@@ -99,8 +99,7 @@ function showPasswordPrompt() {
       console.log("Correct password");
       setCookie("userpass", input);
       modal.remove();
-      const content = document.getElementById("main-content");
-      if (content) content.style.display = "block";
+      window.location.href = "../index.html"; // ✅ Redirect here
     } else {
       console.log("Incorrect password");
       alert("Incorrect password.");
@@ -109,7 +108,6 @@ function showPasswordPrompt() {
 }
 
 // ✅ Modular access-checking functions
-
 function hasAdminAccess() {
   return getCookie("userpass") === "adminpassword";
 }
