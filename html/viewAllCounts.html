@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Inventory Count</title>
 
-  <link rel="stylesheet" href="viewAllCounts.css" />
+  <link rel="stylesheet" href="../css/viewAllCounts.css" />
   <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 </head>
@@ -13,12 +13,17 @@
 <body>
   <div id="main-content">
     <nav class="navbar">
-      <a href="../Home/home.html">Home</a>
-      <a href="../Current Inventory/currentinventory.html">System Inventory</a>
-      <a href="inventoryCount.html" class="active">Inventory Count</a>
-      <a href="../Restock Count/restockcount.html">Restock Count</a>
+      <a href="./home.html">Home</a>
+      <a href="./currentinventory.html">System Inventory</a>
+      <a id="inventoryLink" href="./count.html?mode=Inventory">Inventory Count</a>
+      <a id="restockLink" href="./count.html?mode=Restock">Restock Count</a>
     </nav>
-
+    <div class="back-button">
+      <button onclick="history.back()">
+        <img class="normal" src="../Images/back.png" alt="Back" />
+        <img class="hover" src="../Images/back-gold.png" alt="Back" />
+      </button>
+    </div>
     <!-- Sorting and filtering controls -->
     <div id="sort-filter-controls">
       <div>
@@ -61,13 +66,25 @@
   </div>
 
   <script>
-    window.MODE = 'Inventory';
+    // Get mode from URL query string
+    const urlParams = new URLSearchParams(window.location.search);
+    window.MODE = urlParams.get("mode") || "Inventory";
+
+    // Set active class on navbar links
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.MODE === "Restock") {
+        document.getElementById("restockLink").classList.add("active");
+      } else {
+        document.getElementById("inventoryLink").classList.add("active");
+      }
+
+    });
   </script>
 
-  <!-- Auth logic (if needed) -->
-  <script src="../Common Files/auth.js" defer></script>
+  <!-- Your auth script if needed -->
+  <script type="module" src="../js/auth.js" defer></script>
 
-  <!-- Inventory loader script -->
-  <script src="./listInventoryFiles.js" defer></script>
+  <!-- Your inventory listing script -->
+  <script src="../js/listInventoryFiles.js" defer></script>
 </body>
 </html>

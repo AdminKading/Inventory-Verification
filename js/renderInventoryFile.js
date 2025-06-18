@@ -1,4 +1,4 @@
-import { createInventoryTable } from '../Common Files/ui.js';
+import { createInventoryTable } from './ui.js';
 
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8TC52oIfNt5pVyph38i8kfomJsqpg9fLwxahcnsdQJDyIywg_e08yjmwRRCRrBk2wBA/exec';
 
@@ -33,6 +33,10 @@ async function parseExcelFile(uint8array) {
 
 function loadInventoryFile(fileName) {
   console.log(`Loading inventory file "${fileName}" from Apps Script...`);
+  const container = document.getElementById('inventory-container');
+  container.innerHTML = '<div class="loading">Loading...</div>';
+
+
   const callbackName = 'handleFileBase64_' + Date.now();
 
   window[callbackName] = async function (json) {
@@ -50,8 +54,7 @@ function loadInventoryFile(fileName) {
       const data = await parseExcelFile(bytes);
 
       console.log('Rendering table with parsed data (read-only mode)...');
-      const container = document.getElementById('inventory-container');
-      container.innerHTML = '';
+      container.innerHTML = '';  // Clear loading message
 
       const { table } = createInventoryTable(data, null, true); // readOnly = true
       container.appendChild(table);
@@ -65,7 +68,9 @@ function loadInventoryFile(fileName) {
   };
 
   const script = document.createElement('script');
-  script.src = `${APPS_SCRIPT_URL}?filename=${encodeURIComponent(fileName)}&callback=${callbackName}`;
+  const mode = window.MODE || 'Inventory'; // Pull from global mode (set from URL)
+  script.src = `${APPS_SCRIPT_URL}?filename=${encodeURIComponent(fileName)}&mode=${encodeURIComponent(mode)}&callback=${callbackName}`;
+
   console.log('Appending dynamic <script> tag with src:', script.src);
   document.body.appendChild(script);
 }

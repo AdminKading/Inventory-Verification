@@ -4,16 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Home</title>
-    <link rel="stylesheet" href="home.css" />
+    <link rel="stylesheet" href="../css/home.css" />
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <div id="main-content"> 
         <nav class="navbar">
-            <a href="home.html" class="active">Home</a>
-            <a href="../Current Inventory/currentinventory.html">System Inventory</a>
-            <a href="../Inventory Count/inventorycount.html">Inventory Count</a>
-            <a href="../Restock Count/restockcount.html">Restock Count</a>
+            <a href="./home.html" class="active">Home</a>
+            <a href="./currentinventory.html">System Inventory</a>
+            <a href="./count.html?mode=Inventory">Inventory Count</a>
+            <a href="./count.html?mode=Restock">Restock Count</a>
+
         </nav>
         <div class="content">
             <p>
@@ -32,7 +33,7 @@
     
 
     <!-- Load home.js as a module to allow ES6 imports -->
-     <script src="../Common Files/auth.js" defer></script> <!-- Load auth logic -->
-    <script type="module" src="home.js"></script>
+    <script type="module" src="../js/auth.js" defer></script>
+    <script type="module" src="../js/home.js"></script>
 </body>
 </html>

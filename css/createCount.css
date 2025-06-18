@@ -99,6 +99,45 @@ body {
     pointer-events: none; /* Disable hover on the active page link */
 }
 
+.back-button {
+    margin: 15px;
+    padding-left: 15px;
+    padding-bottom: 5px;
+}
+
+.back-button button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    width: 40px; /* width of your icon */
+    height: auto;
+}
+
+.back-button img {
+    width: 30px;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.3s ease;
+    display: block;
+}
+
+.back-button img.hover {
+    opacity: 0;
+}
+
+.back-button button:hover img.hover {
+    opacity: 1;
+}
+
+.back-button button:hover img.normal {
+    opacity: 0;
+}
+
+
 /* Main container styling */
 .container {
     text-align: center;

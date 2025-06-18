@@ -1,4 +1,4 @@
-import { getExcelData, extractShopName } from '../Common Files/data.js';
+import { getExcelData, extractShopName } from './data.js';
 
 window.onload = () => {
     const data = getExcelData();
@@ -6,6 +6,11 @@ window.onload = () => {
 
     let shopName = extractShopName(data);
     console.log('Extracted shopName:', shopName);  // Debug log to verify extraction
+
+    // Format the shop name by replacing underscores with spaces
+    if (shopName) {
+        shopName = shopName.replace(/_/g, ' ');
+    }
 
     // Update the <h2> element with the shop name
     const titleElement = document.querySelector('h2');

@@ -109,19 +109,54 @@ body {
 }
 
 /* Responsive styles */
-@media (max-width: 500px) {
-    .button-container {
-        max-width: 90%;
+@media only screen and (max-width: 600px) {
+    .navbar {
+        flex-wrap: wrap;
     }
-    .button-row {
-        gap: 12px;
+
+    .navbar a {
+        flex: 1 1 50%;
+        text-align: center;
+        border-right: none;
     }
-    .button-label {
-        width: 100px;
-        font-size: 1rem;
+
+    .navbar a:nth-child(odd) {
+        border-right: 1px solid black;
     }
-    .image-button {
-        width: 120px;
-        height: 120px;
+
+    .button-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        max-width: 300px;
+        margin: 20px auto;
+    }
+
+    .button-grid a {
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        background-color: #505050;
+        color: white;
+        border: 1px solid black;
+        text-decoration: none;
+
+        /* Fix uneven spacing */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Add bottom border explicitly for the first row (top buttons) */
+    .button-grid a:nth-child(1),
+    .button-grid a:nth-child(2) {
+        border-bottom: 2px solid black;
+    }
+
+    /* Ensure no bottom border for the bottom row buttons */
+    .button-grid a:nth-child(3),
+    .button-grid a:nth-child(4) {
+        border-bottom: none !important;
     }
 }
+

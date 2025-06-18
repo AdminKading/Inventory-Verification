@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link rel="stylesheet" href="currentinventory.css">
+    <link rel="stylesheet" href="../css/currentinventory.css">
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <div id="main-content">
         <nav class="navbar">
-            <a href="../Home/home.html">Home</a>
-            <a href="currentinventory.html" class="active">System Inventory</a>
-            <a href="../Inventory Count/inventorycount.html">Inventory Count</a>
-            <a href="../Restock Count/restockcount.html">Restock Count</a>
+            <a href="./home.html">Home</a>
+            <a href="./currentinventory.html" class="active">System Inventory</a>
+            <a href="./count.html?mode=Inventory">Inventory Count</a>
+            <a href="./count.html?mode=Restock">Restock Count</a>
         </nav>
         <div id="inventory-container">
             <!-- Items will be dynamically added here -->
         </div>
-        <script src="../Common Files/auth.js" defer></script>
-        <script src="currentinventory.js"></script>
+        <script type="module" src="../js/auth.js" defer></script>
+        <script src="../js/currentinventory.js"></script>
     </div>
 </body>
 </html>

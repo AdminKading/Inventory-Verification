@@ -4,19 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Inventory Count Viewer</title>
-  <link rel="stylesheet" href="inventorycount.css" />
+  <link rel="stylesheet" href="../css/count.css" />
   <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
   <div id="main-content">
     <nav class="navbar">
-      <a href="../Home/home.html">Home</a>
-      <a href="../Current Inventory/currentinventory.html">System Inventory</a>
-      <a href="inventorycount.html" class="active">Inventory Count</a>
-      <a href="../Restock Count/restockcount.html">Restock Count</a>
+      <a href="./home.html">Home</a>
+      <a href="./currentinventory.html">System Inventory</a>
+      <a id="inventoryLink" href="./count.html?mode=Inventory">Inventory Count</a>
+      <a id="restockLink" href="./count.html?mode=Restock">Restock Count</a>
     </nav>
-
+    
     <!-- Image Buttons container -->
     <div class="button-container">
         <div class="button-row">
@@ -33,18 +33,28 @@
 
   <!-- Set mode before loading shared logic -->
   <script>
-    window.MODE = "Inventory";
+    const urlParams = new URLSearchParams(window.location.search);
+    window.MODE = urlParams.get("mode") || "Inventory";
 
+    // Set active class based on mode
     document.addEventListener("DOMContentLoaded", () => {
+      if (window.MODE === "Restock") {
+        document.getElementById("restockLink").classList.add("active");
+      } else {
+        document.getElementById("inventoryLink").classList.add("active");
+      }
+
       document.getElementById("newFileBtn").onclick = () => {
-        window.location.href = "createCount.html";
+        window.location.href = `createCount.html?mode=${window.MODE}`;
       };
       document.getElementById("listPngsBtn").onclick = () => {
-        window.location.href = "viewAllCounts.html";
+        window.location.href = `viewAllCounts.html?mode=${window.MODE}`;
       };
     });
   </script>
 
-  <script src="../Common Files/auth.js" defer></script>
+
+  <script type="module" src="../js/auth.js" defer></script>
+
 </body>
 </html>

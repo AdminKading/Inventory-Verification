@@ -91,7 +91,7 @@ function loadInventoryFile(fileName) {
       localStorage.setItem('excelData', JSON.stringify(json));
 
       // Redirect to view page
-      window.location.href = './viewCount.html';
+      window.location.href = '../html/viewCount.html';
     }
     // Cleanup callback
     delete window[callbackName];
