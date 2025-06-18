@@ -1,5 +1,22 @@
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8TC52oIfNt5pVyph38i8kfomJsqpg9fLwxahcnsdQJDyIywg_e08yjmwRRCRrBk2wBA/exec';
 
+// Extract shop name from localStorage directly (no imports)
+function extractShopNameFromStorage() {
+  try {
+    const raw = localStorage.getItem('excelData');
+    if (!raw) return 'Unknown_Shop';
+    const data = JSON.parse(raw);
+    if (!Array.isArray(data)) return 'Unknown_Shop';
+
+    const locEntry = data.find(item => item["Inventory Status"] && item["Inventory Status"].startsWith("Locations:"));
+    if (!locEntry) return 'Unknown_Shop';
+
+    return locEntry["Inventory Status"].split(': ')[1].trim().replace(/\s+/g, '_').toLowerCase();
+  } catch {
+    return 'Unknown_Shop';
+  }
+}
+
 // Global JSONP callback to receive grouped file list
 window.handleInventoryData = function (data) {
   const container = document.getElementById('inventory-list');
@@ -10,7 +27,18 @@ window.handleInventoryData = function (data) {
     return;
   }
 
+  const currentShop = extractShopNameFromStorage();
+
+  let foundAny = false;
+
   Object.entries(data).forEach(([monthYear, files]) => {
+    // Filter files by currentShop presence in filename (case-insensitive)
+    const filteredFiles = files.filter(filename => filename.toLowerCase().includes(currentShop));
+
+    if (filteredFiles.length === 0) return; // skip this month if no files match
+
+    foundAny = true;
+
     const section = document.createElement('section');
     section.className = 'inventory-section';
 
@@ -19,7 +47,7 @@ window.handleInventoryData = function (data) {
     header.className = 'inventory-month';
     section.appendChild(header);
 
-    files.forEach(filename => {
+    filteredFiles.forEach(filename => {
       const wrapper = document.createElement('div');
       wrapper.className = 'file-entry';
 
@@ -54,6 +82,10 @@ window.handleInventoryData = function (data) {
 
     container.appendChild(section);
   });
+
+  if (!foundAny) {
+    container.textContent = 'No files found for the current shop.';
+  }
 };
 
 function loadFileList() {

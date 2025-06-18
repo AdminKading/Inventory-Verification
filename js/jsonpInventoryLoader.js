@@ -7,6 +7,8 @@ window.handleInventoryData = function (data) {
   const sortOrder = document.getElementById('sort-select')?.value || 'asc';
   const filterMonth = document.getElementById('month-select')?.value || 'All';
   const filterYear = document.getElementById('year-select')?.value || 'All';
+  const filterShopRaw = document.getElementById('shop-input')?.value || '';
+  const filterShop = filterShopRaw.toLowerCase().replace(/\s+/g, '_');
 
   // Populate year select only once
   const yearSelect = document.getElementById('year-select');
@@ -20,14 +22,24 @@ window.handleInventoryData = function (data) {
     });
   }
 
-  // Filter files by month and year
-  const filtered = Object.entries(data).filter(([monthYear]) => {
+  // Filter files by month, year, and shop
+  const filtered = Object.entries(data).filter(([monthYear, files]) => {
     const [month, year] = monthYear.split(' ');
-    return (filterMonth === 'All' || month === filterMonth) &&
-           (filterYear === 'All' || year === filterYear);
+    if (filterMonth !== 'All' && month !== filterMonth) return false;
+    if (filterYear !== 'All' && year !== filterYear) return false;
+
+    // Filter files inside this monthYear group by shop filter
+    if (filterShop) {
+      // Keep only groups where at least one file includes shop filter
+      const hasShopFile = files.some(f =>
+        f.toLowerCase().includes(filterShop)
+      );
+      if (!hasShopFile) return false;
+    }
+    return true;
   });
 
-  // Sort by date (monthYear string parsed as date)
+  // Sort groups by date
   filtered.sort((a, b) => {
     const dateA = new Date(`${a[0]} 1`);
     const dateB = new Date(`${b[0]} 1`);
@@ -36,13 +48,20 @@ window.handleInventoryData = function (data) {
 
   if (filtered.length === 0) {
     const msg = document.createElement('p');
-    msg.textContent = 'No files found for the selected filter.';
+    msg.textContent = 'No files found for the selected filters.';
     msg.style.color = 'lightgray';
     container.appendChild(msg);
     return;
   }
 
   filtered.forEach(([monthYear, files]) => {
+    // Filter files again by shop inside group (if shop filter active)
+    const filesToShow = filterShop
+      ? files.filter(f => f.toLowerCase().includes(filterShop))
+      : files;
+
+    if (filesToShow.length === 0) return;
+
     const section = document.createElement('section');
     section.className = 'inventory-section';
 
@@ -51,9 +70,8 @@ window.handleInventoryData = function (data) {
     header.textContent = monthYear;
     section.appendChild(header);
 
-    files.forEach(filename => {
-      const original = filename;
-      // Format display name, example: Adel_Shop_Inventory_Count_04-02-2025.xlsx
+    filesToShow.forEach(filename => {
+      // Format display name: e.g. Adel_Shop_Inventory_Count_04-02-2025.xlsx
       const display = filename
         .replace(/\.[^/.]+$/, '') // Remove extension
         .split('_')
@@ -64,16 +82,34 @@ window.handleInventoryData = function (data) {
         }, '')
         .trim();
 
+      // File link container with open and download buttons
+      const fileContainer = document.createElement('div');
+      fileContainer.className = 'file-container';
+
+      // Open link
       const link = document.createElement('a');
       link.className = 'inventory-file';
       link.href = '#';
       link.textContent = display;
+      link.title = 'View file JSON data';
       link.onclick = (e) => {
         e.preventDefault();
-        loadInventoryFile(original);
+        loadInventoryFile(filename);
       };
 
-      section.appendChild(link);
+      // Download button
+      const downloadBtn = document.createElement('button');
+      downloadBtn.textContent = 'Download';
+      downloadBtn.title = 'Download file';
+      downloadBtn.className = 'download-button';
+      downloadBtn.onclick = (e) => {
+        e.preventDefault();
+        downloadInventoryFile(filename);
+      };
+
+      fileContainer.appendChild(link);
+      fileContainer.appendChild(downloadBtn);
+      section.appendChild(fileContainer);
     });
 
     container.appendChild(section);
@@ -87,35 +123,43 @@ function loadInventoryFile(fileName) {
     if (json.error) {
       alert('Error loading file: ' + json.error);
     } else {
-      // Save JSON data to localStorage for viewCount.html
       localStorage.setItem('excelData', JSON.stringify(json));
-
-      // Redirect to view page
       window.location.href = '../html/viewCount.html';
     }
-    // Cleanup callback
     delete window[callbackName];
   };
 
-  // Load JSONP script
   const script = document.createElement('script');
-  script.src = `${APPS_SCRIPT_URL}?filename=${encodeURIComponent(fileName)}&callback=${callbackName}`;
+  script.src = `${APPS_SCRIPT_URL}?filename=${encodeURIComponent(fileName)}&callback=${callbackName}&mode=inventory`;
   document.body.appendChild(script);
+}
+
+function downloadInventoryFile(fileName) {
+  // Redirect to your backend with download=true to trigger direct download redirect
+  const url = `${APPS_SCRIPT_URL}?filename=${encodeURIComponent(fileName)}&download=true&mode=inventory`;
+  window.open(url, '_blank');
 }
 
 function refreshFileList() {
   const oldScript = document.querySelector('script[data-jsonp-loader]');
   if (oldScript) oldScript.remove();
 
+  const shopInput = document.getElementById('shop-input');
+  const shopParam = shopInput ? shopInput.value.trim() : '';
+
   const script = document.createElement('script');
-  script.src = `${APPS_SCRIPT_URL}?callback=handleInventoryData`;
+  let url = `${APPS_SCRIPT_URL}?callback=handleInventoryData&mode=inventory`;
+  if (shopParam) {
+    url += `&shop=${encodeURIComponent(shopParam)}`;
+  }
+  script.src = url;
   script.setAttribute('data-jsonp-loader', 'true');
   document.body.appendChild(script);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
   // Attach listeners for filters if they exist
-  ['sort-select', 'month-select', 'year-select'].forEach(id => {
+  ['sort-select', 'month-select', 'year-select', 'shop-input'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('change', refreshFileList);
   });
