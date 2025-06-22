@@ -6,12 +6,15 @@ export function createInventoryTable(
   readOnly = false,
   cookiePrefix = '',
   showQtyOnHand = true,
-  showExtras = true  // controls if cost, difference, total value difference columns show
+  showExtras = true  // NEW param to control extra columns
 ) {
+  // Remove isInventoryMode since we use showExtras now
+  // const isInventoryMode = cookiePrefix.startsWith('InventoryCount_');
+
   const table = document.createElement('table');
   table.border = '1';
 
-  // Define headers based on flags
+  // Define headers based on showQtyOnHand and showExtras
   const headerRow = document.createElement('tr');
   const headers = ['NAME'];
   if (showQtyOnHand) headers.push('QUANTITY ON HAND');
@@ -55,13 +58,13 @@ export function createInventoryTable(
     const totalValueDiff = difference * cost;
     totalValueDifference += totalValueDiff;
 
-    // NAME cell
+    // NAME cell (always shown)
     const nameTd = document.createElement('td');
     nameTd.textContent = name;
     nameTd.style.padding = '10px';
     tr.appendChild(nameTd);
 
-    // QUANTITY ON HAND cell (conditional)
+    // QUANTITY ON HAND cell (conditionally shown)
     if (showQtyOnHand) {
       const qtyTd = document.createElement('td');
       qtyTd.textContent = qty;
@@ -70,7 +73,7 @@ export function createInventoryTable(
       tr.appendChild(qtyTd);
     }
 
-    // MANUAL QUANTITY cell
+    // MANUAL QUANTITY cell (always shown)
     const manualTd = document.createElement('td');
     manualTd.style.padding = '10px';
 
@@ -93,7 +96,7 @@ export function createInventoryTable(
     }
     tr.appendChild(manualTd);
 
-    // Extras columns (cost, difference, total value difference)
+    // Additional columns for extras if enabled
     if (showExtras) {
       const costTd = document.createElement('td');
       costTd.textContent = cost.toFixed(2);
@@ -117,7 +120,7 @@ export function createInventoryTable(
 
     table.appendChild(tr);
 
-    // Build row object for export
+    // Keep all data in this object to be used for export, etc.
     const rowObj = {
       NAME: name,
       ...(showQtyOnHand ? { 'QUANTITY ON HAND': qty } : {}),
@@ -133,7 +136,7 @@ export function createInventoryTable(
     tableRows.push(rowObj);
   });
 
-  // Append total row if extras shown
+  // Append total row at bottom only if extras shown
   if (showExtras) {
     const totalRow = document.createElement('tr');
 

@@ -18,14 +18,14 @@ window.onload = () => {
   const container = document.getElementById('inventory-container');
   const tableState = { rows: [] };
 
-  const prefix = `${mode}Count_`;
+  const prefix = mode === 'Inventory' ? 'InventoryCount_' : mode + 'Count_';
 
-  // CONTROL UI columns AND exported columns here
-  // Inventory: NO Qty On Hand, WITH extras
-  // Restock: WITH Qty On Hand, NO extras
-  const showQtyOnHand = mode === 'Restock';
-  const showExtras = mode === 'Inventory';
+  // Show only NAME and MANUAL QUANTITY in UI (you can toggle this)
+  const showQtyOnHand = false;
+  // Hide COST, DIFFERENCE, TOTAL VALUE DIFFERENCE columns from UI but keep for export
+  const showExtras = false;
 
+  // Create UI table with minimal columns for editing manual quantity
   const { table, tableRows } = createInventoryTable(validRows, null, false, prefix, showQtyOnHand, showExtras);
   tableState.rows = tableRows;
   container.appendChild(table);
@@ -41,45 +41,76 @@ window.onload = () => {
 
   send.onclick = () => {
     const shopName = extractShopName(data);
+    let totalValueDiff = 0;
 
-    // We already have tableRows built with right columns
-    let exportRows = [...tableState.rows];
+    // Build export rows with full info including cost and differences
+    const exportRows = validRows.map((row, index) => {
+      const nameRaw = row["__EMPTY"] ?? row["NAME"] ?? '';
+      const qtyRaw = row["__EMPTY_9"] ?? row["QUANTITY ON HAND"];
+      const costRaw = row["__EMPTY_3"] ?? row["COST"];
 
-    // Check for missing manual quantities
+      const name = nameRaw.toString().trim();
+      const qty = (qtyRaw === undefined || qtyRaw === '') ? 0 : parseFloat(qtyRaw) || 0;
+      const cost = (costRaw === undefined || costRaw === '') ? 0 : parseFloat(costRaw) || 0;
+
+      const manualInput = document.querySelector(`#manual-${index}`);
+      let manualQty = 0;
+      if (manualInput) {
+        manualQty = parseFloat(manualInput.value);
+        if (isNaN(manualQty)) manualQty = NaN;
+      } else {
+        manualQty = NaN;
+      }
+
+      const diff = isNaN(manualQty) ? NaN : manualQty - qty;
+      const total = isNaN(diff) ? 0 : diff * cost;
+      totalValueDiff += total;
+
+      return {
+        NAME: name,
+        'QUANTITY ON HAND': qty,
+        'MANUAL QUANTITY': manualQty,
+        COST: cost,
+        DIFFERENCE: diff,
+        'TOTAL VALUE DIFFERENCE': total
+      };
+    });
+
+    // Check if any manual quantity is missing or invalid (NaN)
     const hasMissing = exportRows.some(row => isNaN(row['MANUAL QUANTITY']));
+
     if (hasMissing) {
       const confirmFill = confirm('One or more manual quantities are missing or invalid. Do you want to proceed by assigning a value of 0 to those entries?');
       if (!confirmFill) return;
 
+      // Replace NaN manual quantities with 0 and recalc totals
       exportRows.forEach(row => {
         if (isNaN(row['MANUAL QUANTITY'])) {
           row['MANUAL QUANTITY'] = 0;
-          if (mode !== 'Restock') {
-            row['DIFFERENCE'] = 0 - row['QUANTITY ON HAND'];
-            row['TOTAL VALUE DIFFERENCE'] = row['DIFFERENCE'] * row['COST'];
-          }
+          row['DIFFERENCE'] = 0 - row['QUANTITY ON HAND'];
+          row['TOTAL VALUE DIFFERENCE'] = row['DIFFERENCE'] * row['COST'];
         }
       });
+
+      // Recalculate totalValueDiff after fixing missing
+      totalValueDiff = exportRows.reduce((sum, r) => sum + (r['TOTAL VALUE DIFFERENCE'] || 0), 0);
     }
 
+    // Append total row for Inventory mode
     if (mode === 'Inventory') {
-      let totalValueDiff = exportRows.reduce((sum, r) => sum + (r['TOTAL VALUE DIFFERENCE'] || 0), 0);
-      exportRows.push({
+      const totalRow = {
         NAME: '',
         'QUANTITY ON HAND': '',
         'MANUAL QUANTITY': '',
         COST: '',
         DIFFERENCE: '',
         'TOTAL VALUE DIFFERENCE': `Total: ${totalValueDiff.toFixed(2)}`
-      });
+      };
+      exportRows.push(totalRow);
     }
 
-    // For Restock, explicitly pass columns to export function to exclude extras
-    const columns = mode === 'Restock'
-      ? ['NAME', 'QUANTITY ON HAND', 'MANUAL QUANTITY']
-      : null;
+    const blob = exportToExcel(exportRows, shopName, mode, true);
 
-    const blob = exportToExcel(exportRows, shopName, mode, true, columns);
     sendToGoogleDrive(blob, shopName, mode)
       .then(() => {
         clearCookies(mode);
