@@ -20,12 +20,9 @@ window.onload = () => {
 
   const prefix = mode === 'Inventory' ? 'InventoryCount_' : mode + 'Count_';
 
-  // Show only NAME and MANUAL QUANTITY in UI (you can toggle this)
-  const showQtyOnHand = false;
-  // Hide COST, DIFFERENCE, TOTAL VALUE DIFFERENCE columns from UI but keep for export
+  const showQtyOnHand = false; 
   const showExtras = false;
 
-  // Create UI table with minimal columns for editing manual quantity
   const { table, tableRows } = createInventoryTable(validRows, null, false, prefix, showQtyOnHand, showExtras);
   tableState.rows = tableRows;
   container.appendChild(table);
@@ -41,13 +38,12 @@ window.onload = () => {
 
   send.onclick = () => {
     const shopName = extractShopName(data);
-    let totalValueDiff = 0;
+    let totalCostDiff = 0;
 
-    // Build export rows with full info including cost and differences
     const exportRows = validRows.map((row, index) => {
       const nameRaw = row["__EMPTY"] ?? row["NAME"] ?? '';
       const qtyRaw = row["__EMPTY_9"] ?? row["QUANTITY ON HAND"];
-      const costRaw = row["__EMPTY_3"] ?? row["COST"];
+      const costRaw = row["__EMPTY_3"] ?? row["COST ($)"];
 
       const name = nameRaw.toString().trim();
       const qty = (qtyRaw === undefined || qtyRaw === '') ? 0 : parseFloat(qtyRaw) || 0;
@@ -62,54 +58,57 @@ window.onload = () => {
         manualQty = NaN;
       }
 
-      const diff = isNaN(manualQty) ? NaN : manualQty - qty;
-      const total = isNaN(diff) ? 0 : diff * cost;
-      totalValueDiff += total;
+      const diffQty = isNaN(manualQty) ? NaN : manualQty - qty;
+      const costDiff = isNaN(diffQty) ? 0 : diffQty * cost;
+      totalCostDiff += costDiff;
 
       return {
         NAME: name,
-        'QUANTITY ON HAND': qty,
+        'SYSTEM QUANTITY': qty,
         'MANUAL QUANTITY': manualQty,
-        COST: cost,
-        DIFFERENCE: diff,
-        'TOTAL VALUE DIFFERENCE': total
+        'SYSTEM COST': qty * cost,
+        'MANUAL COST': manualQty * cost,
+        'QUANTITY DIFFERENCE': diffQty,
+        'COST DIFFERENCE': costDiff,
+        _costUnit: cost // add hidden field for later correction
       };
     });
 
-    // Check if any manual quantity is missing or invalid (NaN)
     const hasMissing = exportRows.some(row => isNaN(row['MANUAL QUANTITY']));
 
     if (hasMissing) {
       const confirmFill = confirm('One or more manual quantities are missing or invalid. Do you want to proceed by assigning a value of 0 to those entries?');
       if (!confirmFill) return;
 
-      // Replace NaN manual quantities with 0 and recalc totals
       exportRows.forEach(row => {
         if (isNaN(row['MANUAL QUANTITY'])) {
           row['MANUAL QUANTITY'] = 0;
-          row['DIFFERENCE'] = 0 - row['QUANTITY ON HAND'];
-          row['TOTAL VALUE DIFFERENCE'] = row['DIFFERENCE'] * row['COST'];
+          row['MANUAL COST'] = 0;
+          row['QUANTITY DIFFERENCE'] = 0 - row['SYSTEM QUANTITY'];
+          row['COST DIFFERENCE'] = row['QUANTITY DIFFERENCE'] * row._costUnit;
         }
       });
 
-      // Recalculate totalValueDiff after fixing missing
-      totalValueDiff = exportRows.reduce((sum, r) => sum + (r['TOTAL VALUE DIFFERENCE'] || 0), 0);
+      totalCostDiff = exportRows.reduce((sum, r) => sum + (r['COST DIFFERENCE'] || 0), 0);
     }
 
-    // Append total row for Inventory mode
+    // Remove the helper _costUnit before export
+    const cleanedRows = exportRows.map(({ _costUnit, ...rest }) => rest);
+
     if (mode === 'Inventory') {
       const totalRow = {
         NAME: '',
-        'QUANTITY ON HAND': '',
+        'SYSTEM QUANTITY': '',
         'MANUAL QUANTITY': '',
-        COST: '',
-        DIFFERENCE: '',
-        'TOTAL VALUE DIFFERENCE': `Total: ${totalValueDiff.toFixed(2)}`
+        'SYSTEM COST': '',
+        'MANUAL COST': '',
+        'QUANTITY DIFFERENCE': '',
+        'COST DIFFERENCE': `Total: ${totalCostDiff.toFixed(2)}`
       };
-      exportRows.push(totalRow);
+      cleanedRows.push(totalRow);
     }
 
-    const blob = exportToExcel(exportRows, shopName, mode, true);
+    const blob = exportToExcel(cleanedRows, shopName, mode, true);
 
     sendToGoogleDrive(blob, shopName, mode)
       .then(() => {

@@ -36,7 +36,6 @@ function loadInventoryFile(fileName) {
   const container = document.getElementById('inventory-container');
   container.innerHTML = '<div class="loading">Loading...</div>';
 
-
   const callbackName = 'handleFileBase64_' + Date.now();
 
   window[callbackName] = async function (json) {
@@ -53,10 +52,16 @@ function loadInventoryFile(fileName) {
       const bytes = base64ToUint8Array(json.base64);
       const data = await parseExcelFile(bytes);
 
-      console.log('Rendering table with parsed data (read-only mode)...');
+      // Filter out empty rows (no name)
+      const cleanData = data.filter(row => {
+        const name = (row["__EMPTY"] ?? row["NAME"] ?? '').toString().trim();
+        return name !== '';
+      });
+
+      console.log(`Rendering table with ${cleanData.length} valid row(s) (read-only mode)...`);
       container.innerHTML = '';  // Clear loading message
 
-      const { table } = createInventoryTable(data, null, true); // readOnly = true
+      const { table } = createInventoryTable(cleanData, null, true); // readOnly = true
       container.appendChild(table);
       console.log('Table rendered successfully and appended to DOM.');
     } catch (e) {
@@ -68,7 +73,7 @@ function loadInventoryFile(fileName) {
   };
 
   const script = document.createElement('script');
-  const mode = window.MODE || 'Inventory'; // Pull from global mode (set from URL)
+  const mode = window.MODE || 'Inventory';
   script.src = `${APPS_SCRIPT_URL}?filename=${encodeURIComponent(fileName)}&mode=${encodeURIComponent(mode)}&callback=${callbackName}`;
 
   console.log('Appending dynamic <script> tag with src:', script.src);

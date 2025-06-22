@@ -6,20 +6,16 @@ export function createInventoryTable(
   readOnly = false,
   cookiePrefix = '',
   showQtyOnHand = true,
-  showExtras = true  // NEW param to control extra columns
+  showExtras = true
 ) {
-  // Remove isInventoryMode since we use showExtras now
-  // const isInventoryMode = cookiePrefix.startsWith('InventoryCount_');
-
   const table = document.createElement('table');
   table.border = '1';
 
-  // Define headers based on showQtyOnHand and showExtras
   const headerRow = document.createElement('tr');
   const headers = ['NAME'];
-  if (showQtyOnHand) headers.push('QUANTITY ON HAND');
+  if (showQtyOnHand) headers.push('SYSTEM QUANTITY');
   headers.push('MANUAL QUANTITY');
-  if (showExtras) headers.push('COST', 'DIFFERENCE', 'TOTAL VALUE DIFFERENCE');
+  if (showExtras) headers.push('SYSTEM COST', 'MANUAL COST', 'QUANTITY DIFFERENCE', 'COST DIFFERENCE');
 
   headers.forEach(h => {
     const th = document.createElement('th');
@@ -31,13 +27,13 @@ export function createInventoryTable(
   table.appendChild(headerRow);
 
   const tableRows = [];
-  let totalValueDifference = 0;
+  let totalCostDifference = 0;
 
   rows.forEach((row, index) => {
     const tr = document.createElement('tr');
     const nameRaw = row["__EMPTY"] ?? row["NAME"] ?? '';
-    const qtyRaw = row["__EMPTY_9"] ?? row["QUANTITY ON HAND"];
-    const costRaw = row["__EMPTY_3"] ?? row["COST"];
+    const qtyRaw = row["__EMPTY_9"] ?? row["QUANTITY ON HAND"] ?? row["SYSTEM QUANTITY"];
+    const costRaw = row["__EMPTY_3"] ?? row["COST ($)"] ?? row["SYSTEM COST"];
 
     const name = nameRaw.toString().trim();
     const qty = (qtyRaw === undefined || qtyRaw === '') ? 0 : parseFloat(qtyRaw) || 0;
@@ -55,16 +51,16 @@ export function createInventoryTable(
     }
 
     const difference = manualValue - qty;
-    const totalValueDiff = difference * cost;
-    totalValueDifference += totalValueDiff;
+    const systemCost = qty * cost;
+    const manualCost = manualValue * cost;
+    const costDifference = manualCost - systemCost;
+    totalCostDifference += costDifference;
 
-    // NAME cell (always shown)
     const nameTd = document.createElement('td');
     nameTd.textContent = name;
     nameTd.style.padding = '10px';
     tr.appendChild(nameTd);
 
-    // QUANTITY ON HAND cell (conditionally shown)
     if (showQtyOnHand) {
       const qtyTd = document.createElement('td');
       qtyTd.textContent = qty;
@@ -73,7 +69,6 @@ export function createInventoryTable(
       tr.appendChild(qtyTd);
     }
 
-    // MANUAL QUANTITY cell (always shown)
     const manualTd = document.createElement('td');
     manualTd.style.padding = '10px';
 
@@ -96,50 +91,55 @@ export function createInventoryTable(
     }
     tr.appendChild(manualTd);
 
-    // Additional columns for extras if enabled
     if (showExtras) {
-      const costTd = document.createElement('td');
-      costTd.textContent = cost.toFixed(2);
-      costTd.style.padding = '10px';
-      costTd.style.textAlign = 'center';
+      const sysCostTd = document.createElement('td');
+      sysCostTd.textContent = readOnly ? `$${systemCost.toFixed(2)}` : systemCost.toFixed(2);
+      sysCostTd.style.padding = '10px';
+      sysCostTd.style.textAlign = 'center';
+
+      const manCostTd = document.createElement('td');
+      manCostTd.textContent = readOnly ? `$${manualCost.toFixed(2)}` : manualCost.toFixed(2);
+      manCostTd.style.padding = '10px';
+      manCostTd.style.textAlign = 'center';
 
       const diffTd = document.createElement('td');
-      diffTd.textContent = difference.toFixed(2);
+      diffTd.textContent = formatSigned(difference);
+      diffTd.style.color = getColor(difference);
       diffTd.style.padding = '10px';
       diffTd.style.textAlign = 'center';
 
-      const totalValTd = document.createElement('td');
-      totalValTd.textContent = totalValueDiff.toFixed(2);
-      totalValTd.style.padding = '10px';
-      totalValTd.style.textAlign = 'center';
+      const costDiffTd = document.createElement('td');
+      costDiffTd.textContent = readOnly ? `$${formatSigned(costDifference.toFixed(2))}` : formatSigned(costDifference.toFixed(2));
+      costDiffTd.style.color = getColor(costDifference);
+      costDiffTd.style.padding = '10px';
+      costDiffTd.style.textAlign = 'center';
 
-      tr.appendChild(costTd);
+      tr.appendChild(sysCostTd);
+      tr.appendChild(manCostTd);
       tr.appendChild(diffTd);
-      tr.appendChild(totalValTd);
+      tr.appendChild(costDiffTd);
     }
 
     table.appendChild(tr);
 
-    // Keep all data in this object to be used for export, etc.
     const rowObj = {
       NAME: name,
-      ...(showQtyOnHand ? { 'QUANTITY ON HAND': qty } : {}),
+      ...(showQtyOnHand ? { 'SYSTEM QUANTITY': qty } : {}),
       'MANUAL QUANTITY': manualValue,
     };
 
     if (showExtras) {
-      rowObj['COST'] = cost;
-      rowObj['DIFFERENCE'] = difference;
-      rowObj['TOTAL VALUE DIFFERENCE'] = totalValueDiff;
+      rowObj['SYSTEM COST'] = systemCost;
+      rowObj['MANUAL COST'] = manualCost;
+      rowObj['QUANTITY DIFFERENCE'] = difference;
+      rowObj['COST DIFFERENCE'] = costDifference;
     }
 
     tableRows.push(rowObj);
   });
 
-  // Append total row at bottom only if extras shown
   if (showExtras) {
     const totalRow = document.createElement('tr');
-
     for (let i = 0; i < headers.length - 1; i++) {
       const td = document.createElement('td');
       td.textContent = '';
@@ -148,15 +148,42 @@ export function createInventoryTable(
     }
 
     const totalTd = document.createElement('td');
-    totalTd.textContent = `Total: ${totalValueDifference.toFixed(2)}`;
+
+    const totalLabel = document.createElement('span');
+    totalLabel.textContent = 'Total: ';
+
+    const totalValue = document.createElement('span');
+    totalValue.textContent = `$${totalCostDifference.toFixed(2)}`;
+    totalValue.style.color = getColor(totalCostDifference);
+
+    totalTd.appendChild(totalLabel);
+    totalTd.appendChild(totalValue);
+
     totalTd.style.fontWeight = 'bold';
     totalTd.style.textAlign = 'center';
     totalTd.style.padding = '10px';
     totalTd.style.backgroundColor = '#f0f0f0';
+
     totalRow.appendChild(totalTd);
 
     table.appendChild(totalRow);
   }
 
   return { table, tableRows };
+}
+
+function formatSigned(value) {
+  const num = parseFloat(value);
+  if (isNaN(num)) return value;
+  if (num > 0) return `+${num}`;
+  if (num === 0) return `0`;
+  return `${num}`;
+}
+
+function getColor(value) {
+  const num = parseFloat(value);
+  if (isNaN(num)) return 'black';
+  if (num > 0) return 'green';
+  if (num < 0) return 'red';
+  return 'blue';
 }
