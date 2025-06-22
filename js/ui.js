@@ -52,10 +52,10 @@ export function createInventoryTable(
         : parseFloat(cookieVal);
     }
 
-    const systemCost = (manualValue === -1) ? 0 : qty * cost;
-    const manualCost = (manualValue === -1) ? 0 : manualValue * cost;
-    const difference = (manualValue === -1) ? 0 : manualValue - qty;
-    const costDifference = (manualValue === -1) ? 0 : manualCost - systemCost;
+    const systemCost = (manualValue === -1) ? null : qty * cost;
+    const manualCost = (manualValue === -1) ? null : manualValue * cost;
+    const difference = (manualValue === -1) ? null : manualValue - qty;
+    const costDifference = (manualValue === -1) ? null : manualCost - systemCost;
 
     if (manualValue !== -1) {
       totalCostDifference += costDifference;
@@ -79,7 +79,14 @@ export function createInventoryTable(
     manualTd.style.textAlign = 'center';
 
     if (readOnly) {
-      manualTd.textContent = (manualValue === -1) ? 'x' : manualValue;
+      if (manualValue === -1) {
+        const xSpan = document.createElement('span');
+        xSpan.textContent = 'x';
+        xSpan.style.color = 'orange';
+        manualTd.appendChild(xSpan);
+      } else {
+        manualTd.textContent = manualValue;
+      }
     } else {
       const input = document.createElement('input');
       input.type = 'number';
@@ -103,24 +110,26 @@ export function createInventoryTable(
 
     if (showExtras) {
       const sysCostTd = document.createElement('td');
-      sysCostTd.textContent = (readOnly ? `$${systemCost.toFixed(2)}` : systemCost.toFixed(2));
+      sysCostTd.textContent = (systemCost === null) ? '' : (readOnly ? `$${systemCost.toFixed(2)}` : systemCost.toFixed(2));
       sysCostTd.style.padding = '10px';
       sysCostTd.style.textAlign = 'center';
 
       const manCostTd = document.createElement('td');
-      manCostTd.textContent = (readOnly ? `$${manualCost.toFixed(2)}` : manualCost.toFixed(2));
+      manCostTd.textContent = (manualCost === null) ? '' : (readOnly ? `$${manualCost.toFixed(2)}` : manualCost.toFixed(2));
       manCostTd.style.padding = '10px';
       manCostTd.style.textAlign = 'center';
 
       const diffTd = document.createElement('td');
-      diffTd.textContent = formatSigned(difference);
-      diffTd.style.color = getColor(difference);
+      diffTd.textContent = (difference === null) ? '' : formatSigned(difference);
+      diffTd.style.color = (difference === null) ? 'black' : getColor(difference);
       diffTd.style.padding = '10px';
       diffTd.style.textAlign = 'center';
 
       const costDiffTd = document.createElement('td');
-      costDiffTd.textContent = (readOnly ? `$${formatSigned(costDifference.toFixed(2))}` : formatSigned(costDifference.toFixed(2)));
-      costDiffTd.style.color = getColor(costDifference);
+      costDiffTd.textContent = (costDifference === null)
+        ? ''
+        : (readOnly ? `$${formatSigned(costDifference.toFixed(2))}` : formatSigned(costDifference.toFixed(2)));
+      costDiffTd.style.color = (costDifference === null) ? 'black' : getColor(costDifference);
       costDiffTd.style.padding = '10px';
       costDiffTd.style.textAlign = 'center';
 
