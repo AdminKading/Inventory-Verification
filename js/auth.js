@@ -10,7 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!validPasswords.includes(savedPassword)) {
     console.log("No valid cookie, showing prompt");
-    showPasswordPrompt();
+    showPasswordPrompt(() => {
+      // Show content after successful login
+      if (content) content.style.display = "block";
+    });
   } else {
     console.log("Valid cookie, showing content");
     if (content) content.style.display = "block";
@@ -32,7 +35,7 @@ function getCookie(name) {
   return null;
 }
 
-function showPasswordPrompt() {
+function showPasswordPrompt(onSuccess) {
   console.log("showPasswordPrompt called");
 
   if (document.getElementById("password-modal")) return;
@@ -99,7 +102,7 @@ function showPasswordPrompt() {
       console.log("Correct password");
       setCookie("userpass", input);
       modal.remove();
-      window.location.href = "../index.html"; // ✅ Redirect here
+      if (typeof onSuccess === 'function') onSuccess();  // Call the success callback
     } else {
       console.log("Incorrect password");
       alert("Incorrect password.");

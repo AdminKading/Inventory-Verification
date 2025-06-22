@@ -37,24 +37,29 @@ export function createInventoryTable(
 
     const name = nameRaw.toString().trim();
     const qty = (qtyRaw === undefined || qtyRaw === '') ? 0 : parseFloat(qtyRaw) || 0;
-    const cost = (costRaw === undefined || costRaw === '') ? 0 : parseFloat(costRaw) || 0;
+    const costRawCleaned = (costRaw === undefined || costRaw === '') ? '0' : costRaw.toString().replace(/[^0-9.\-]+/g, '');
+    const totalCost = parseFloat(costRawCleaned) || 0;
+    const cost = (qty !== 0) ? totalCost / qty : 0;
 
     let manualValue = 0;
     if (readOnly) {
       const raw = row["MANUAL QUANTITY"];
-      manualValue = raw === undefined || raw === '' || isNaN(raw) ? 0 : parseFloat(raw);
+      manualValue = raw === undefined || raw === '' || isNaN(raw) ? -1 : parseFloat(raw);
     } else {
       const cookieVal = getCookie(cookiePrefix + name);
       manualValue = cookieVal === undefined || cookieVal === '' || isNaN(cookieVal)
-        ? 0
+        ? -1
         : parseFloat(cookieVal);
     }
 
-    const difference = manualValue - qty;
-    const systemCost = qty * cost;
-    const manualCost = manualValue * cost;
-    const costDifference = manualCost - systemCost;
-    totalCostDifference += costDifference;
+    const systemCost = (manualValue === -1) ? 0 : qty * cost;
+    const manualCost = (manualValue === -1) ? 0 : manualValue * cost;
+    const difference = (manualValue === -1) ? 0 : manualValue - qty;
+    const costDifference = (manualValue === -1) ? 0 : manualCost - systemCost;
+
+    if (manualValue !== -1) {
+      totalCostDifference += costDifference;
+    }
 
     const nameTd = document.createElement('td');
     nameTd.textContent = name;
@@ -71,20 +76,25 @@ export function createInventoryTable(
 
     const manualTd = document.createElement('td');
     manualTd.style.padding = '10px';
+    manualTd.style.textAlign = 'center';
 
     if (readOnly) {
-      manualTd.textContent = manualValue;
-      manualTd.style.textAlign = 'center';
+      manualTd.textContent = (manualValue === -1) ? 'x' : manualValue;
     } else {
       const input = document.createElement('input');
       input.type = 'number';
-      input.value = manualValue;
+      input.value = manualValue === -1 ? '' : manualValue;
       input.id = `manual-${index}`;
 
       input.addEventListener('input', (e) => {
-        const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
-        setCookie(cookiePrefix + name, value, 2);
-        onManualUpdate?.(index, value);
+        if (e.target.value === '') {
+          setCookie(cookiePrefix + name, -1, 2);
+          onManualUpdate?.(index, -1);
+        } else {
+          const value = parseFloat(e.target.value);
+          setCookie(cookiePrefix + name, value, 2);
+          onManualUpdate?.(index, value);
+        }
       });
 
       manualTd.appendChild(input);
@@ -93,12 +103,12 @@ export function createInventoryTable(
 
     if (showExtras) {
       const sysCostTd = document.createElement('td');
-      sysCostTd.textContent = readOnly ? `$${systemCost.toFixed(2)}` : systemCost.toFixed(2);
+      sysCostTd.textContent = (readOnly ? `$${systemCost.toFixed(2)}` : systemCost.toFixed(2));
       sysCostTd.style.padding = '10px';
       sysCostTd.style.textAlign = 'center';
 
       const manCostTd = document.createElement('td');
-      manCostTd.textContent = readOnly ? `$${manualCost.toFixed(2)}` : manualCost.toFixed(2);
+      manCostTd.textContent = (readOnly ? `$${manualCost.toFixed(2)}` : manualCost.toFixed(2));
       manCostTd.style.padding = '10px';
       manCostTd.style.textAlign = 'center';
 
@@ -109,7 +119,7 @@ export function createInventoryTable(
       diffTd.style.textAlign = 'center';
 
       const costDiffTd = document.createElement('td');
-      costDiffTd.textContent = readOnly ? `$${formatSigned(costDifference.toFixed(2))}` : formatSigned(costDifference.toFixed(2));
+      costDiffTd.textContent = (readOnly ? `$${formatSigned(costDifference.toFixed(2))}` : formatSigned(costDifference.toFixed(2)));
       costDiffTd.style.color = getColor(costDifference);
       costDiffTd.style.padding = '10px';
       costDiffTd.style.textAlign = 'center';
@@ -148,7 +158,6 @@ export function createInventoryTable(
     }
 
     const totalTd = document.createElement('td');
-
     const totalLabel = document.createElement('span');
     totalLabel.textContent = 'Total: ';
 
@@ -165,7 +174,6 @@ export function createInventoryTable(
     totalTd.style.backgroundColor = '#f0f0f0';
 
     totalRow.appendChild(totalTd);
-
     table.appendChild(totalRow);
   }
 

@@ -20,7 +20,7 @@ window.onload = () => {
 
   const prefix = mode === 'Inventory' ? 'InventoryCount_' : mode + 'Count_';
 
-  const showQtyOnHand = false; 
+  const showQtyOnHand = false;
   const showExtras = false;
 
   const { table, tableRows } = createInventoryTable(validRows, null, false, prefix, showQtyOnHand, showExtras);
@@ -50,46 +50,33 @@ window.onload = () => {
       const cost = (costRaw === undefined || costRaw === '') ? 0 : parseFloat(costRaw) || 0;
 
       const manualInput = document.querySelector(`#manual-${index}`);
-      let manualQty = 0;
+      let manualQty = -1;
       if (manualInput) {
-        manualQty = parseFloat(manualInput.value);
-        if (isNaN(manualQty)) manualQty = NaN;
-      } else {
-        manualQty = NaN;
+        manualQty = manualInput.value === '' ? -1 : parseFloat(manualInput.value);
+        if (isNaN(manualQty)) manualQty = -1;
       }
 
-      const diffQty = isNaN(manualQty) ? NaN : manualQty - qty;
-      const costDiff = isNaN(diffQty) ? 0 : diffQty * cost;
+      const diffQty = (manualQty === -1) ? 0 : manualQty - qty;
+      const costDiff = (manualQty === -1) ? 0 : diffQty * cost;
       totalCostDiff += costDiff;
 
       return {
         NAME: name,
         'SYSTEM QUANTITY': qty,
         'MANUAL QUANTITY': manualQty,
-        'SYSTEM COST': qty * cost,
-        'MANUAL COST': manualQty * cost,
-        'QUANTITY DIFFERENCE': diffQty,
-        'COST DIFFERENCE': costDiff,
-        _costUnit: cost // add hidden field for later correction
+        'SYSTEM COST': (manualQty === -1) ? 0 : qty * cost,
+        'MANUAL COST': (manualQty === -1) ? 0 : manualQty * cost,
+        'QUANTITY DIFFERENCE': (manualQty === -1) ? 0 : diffQty,
+        'COST DIFFERENCE': (manualQty === -1) ? 0 : costDiff,
+        _costUnit: cost
       };
     });
 
-    const hasMissing = exportRows.some(row => isNaN(row['MANUAL QUANTITY']));
+    const hasMissing = exportRows.some(row => row['MANUAL QUANTITY'] === -1);
 
     if (hasMissing) {
-      const confirmFill = confirm('One or more manual quantities are missing or invalid. Do you want to proceed by assigning a value of 0 to those entries?');
+      const confirmFill = confirm('One or more manual quantities are missing or invalid. These entries will not be counted toward the totals. Do you want to proceed anyway?');
       if (!confirmFill) return;
-
-      exportRows.forEach(row => {
-        if (isNaN(row['MANUAL QUANTITY'])) {
-          row['MANUAL QUANTITY'] = 0;
-          row['MANUAL COST'] = 0;
-          row['QUANTITY DIFFERENCE'] = 0 - row['SYSTEM QUANTITY'];
-          row['COST DIFFERENCE'] = row['QUANTITY DIFFERENCE'] * row._costUnit;
-        }
-      });
-
-      totalCostDiff = exportRows.reduce((sum, r) => sum + (r['COST DIFFERENCE'] || 0), 0);
     }
 
     // Remove the helper _costUnit before export

@@ -32,10 +32,9 @@ window.handleInventoryData = function (data) {
   let foundAny = false;
 
   Object.entries(data).forEach(([monthYear, files]) => {
-    // Filter files by currentShop presence in filename (case-insensitive)
     const filteredFiles = files.filter(filename => filename.toLowerCase().includes(currentShop));
 
-    if (filteredFiles.length === 0) return; // skip this month if no files match
+    if (filteredFiles.length === 0) return;
 
     foundAny = true;
 
@@ -53,16 +52,25 @@ window.handleInventoryData = function (data) {
 
       const mode = window.MODE || 'Inventory';
 
-      // View link (no access restriction)
+      // View link (now admin-only)
       const viewLink = document.createElement('a');
-      viewLink.href = `viewCount.html?file=${encodeURIComponent(filename)}&mode=${encodeURIComponent(mode)}`;
+      viewLink.href = '#';
       viewLink.textContent = filename.replace(/\.[^/.]+$/, '');
       viewLink.className = 'inventory-file';
+      viewLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (typeof hasAdminAccess === 'function' && hasAdminAccess()) {
+          window.location.href = `viewCount.html?file=${encodeURIComponent(filename)}&mode=${encodeURIComponent(mode)}`;
+        } else {
+          alert('You do not have permission to view this file. Please log in as an admin.');
+          if (typeof showPasswordPrompt === 'function') showPasswordPrompt();
+        }
+      });
       wrapper.appendChild(viewLink);
 
       // Download link (admin only)
       const downloadLink = document.createElement('a');
-      downloadLink.href = '#'; // Placeholder
+      downloadLink.href = '#';
       downloadLink.className = 'download-icon';
       downloadLink.title = 'Download';
       downloadLink.addEventListener('click', (e) => {

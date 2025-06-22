@@ -17,7 +17,7 @@ window.onload = () => {
             table.border = '1';
 
             // Add table headers
-            const headers = ['NAME', 'QUANTITY ON HAND'];
+            const headers = ['NAME', 'SYSTEM QUANTITY'];
             const headerRow = document.createElement('tr');
             headers.forEach(headerText => {
                 const th = document.createElement('th');

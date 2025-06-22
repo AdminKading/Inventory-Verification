@@ -80,8 +80,27 @@ function loadInventoryFile(fileName) {
   document.body.appendChild(script);
 }
 
+// Helper to get cookie
+function getCookie(name) {
+  const cookies = document.cookie.split(';');
+  for (let cookie of cookies) {
+    const [key, val] = cookie.trim().split('=');
+    if (key === name) return val;
+  }
+  return null;
+}
+
+// Check admin access before anything else
 window.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM fully loaded. Starting inventory file load.');
+  console.log('DOM fully loaded. Checking admin access...');
+  const userpass = getCookie('userpass');
+  if (userpass !== 'adminpassword') {
+    alert('You do not have permission to view this file. Redirecting to login page.');
+    window.location.href = '../index.html';
+    return;
+  }
+
+  console.log('Admin access confirmed. Starting inventory file load.');
   const fileName = getQueryParam('file');
   if (!fileName) {
     alert('No file specified in URL.');

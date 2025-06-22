@@ -1,17 +1,51 @@
+// Helper to normalize names: lowercase, collapse spaces, trim
+const normalizeName = (str) => str.toLowerCase().replace(/\s+/g, ' ').trim();
+
+// Build INVALID_NAMES set with normalized names
 const INVALID_NAMES = new Set([
-    "chainsaws", "dewalt light", "drill (impact)", "drill (regular)", "multi-tool",
-    "post hole diggers", "push lawn mower", "sawzall", "skillsaw", "snow blower",
-    "snow shovels", "speed bumps", "sprayer backpacks", "stihl bf-km",
-    "stihl blowers", "weed whips", "Hedge Trimmper", "Kubota Lawnmower", "Mailbox Lock C9100", "Pole Sow Urbandale",
-    "Z-Spray Max", "10 Gallon Dogipot Trashbags (1unit=1box)", "42 Gallon Wing-Tie Contractor Trash Bags", 
-    "Master key locking mechanisms (deadbolts)", "Trim Nailer", "Jelly Jar replacement", "6 ft orange ladder", 
-    "6ft tall yellow scaffolding", "Post pounder", "Push broom", "Shop Vac small", "Shop-Vac large", 
-    "Sledgehammer", "Small Pick-up Dogipot Bags (1 unit = 1 roll)", "Snow plow", "Timmer-235E", "Snow Plow #47E & 105E"
-]);
+    "chainsaws",
+    "dewalt light",
+    "drill (impact)",
+    "drill (regular)",
+    "multi-tool",
+    "post hole diggers",
+    "push lawn mower",
+    "sawzall",
+    "skillsaw",
+    "snow blower",
+    "snow shovels",
+    "speed bumps",
+    "sprayer backpacks",
+    "stihl bf-km",
+    "stihl blowers",
+    "weed whips",
+    "hedge trimmer",
+    "kubota lawnmower",
+    "mailbox lock c9100",
+    "pole saw",
+    "z-spray max",
+    "10 gallon dogipot trashbags (1 unit = 1 box)",
+    "42 gallon wing-tie contractor trash bags",
+    "master key locking mechanisms (deadbolts)",
+    "trim nailer",
+    "jelly jar replacement",
+    "6 ft orange ladder",
+    "6ft tall yellow scaffolding",
+    "post pounder",
+    "push broom",
+    "shop vac small",
+    "shop-vac large",
+    "sledgehammer",
+    "small pick-up dogipot bags (1 unit = 1 roll)",
+    "snow plow",
+    "timmer-235e",
+    "snow plow #47e & 105e"
+].map(normalizeName));
 
 export const filterValidRows = (rows, mode = 'Inventory') => {
     return rows.slice(1).filter(row => {
-        const name = row["__EMPTY"]?.trim().toLowerCase();
+        const rawName = row["__EMPTY"] ?? '';
+        const name = normalizeName(rawName);
         const qty = parseInt(row["__EMPTY_9"], 10);
         const restock = parseInt(row["__EMPTY_10"], 10);
 
@@ -26,6 +60,8 @@ export const filterValidRows = (rows, mode = 'Inventory') => {
 
         const hasValidQty = !isNaN(qty);
         const hasValidRestock = !isNaN(restock);
+
+        console.log(`Row: "${rawName}" -> "${name}" | Valid: ${isValidName}`);
 
         if (mode === 'Restock') {
             return isValidName && hasValidQty && hasValidRestock && qty <= restock;
