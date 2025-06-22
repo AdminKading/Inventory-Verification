@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inventory Count Viewer</title>
+  <link rel="stylesheet" href="../css/count.css" />
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <div id="main-content">
+    <nav class="navbar">
+      <a href="./home.html">Home</a>
+      <a href="./currentinventory.html">System Inventory</a>
+      <a id="inventoryLink" href="./count.html?mode=Inventory">Inventory Count</a>
+      <a id="restockLink" href="./count.html?mode=Restock">Restock Count</a>
+    </nav>
+
+    <!-- Image Buttons container -->
+    <div class="button-container">
+      <div class="button-row">
+        <span class="button-label clickable-label" id="createCountLabel"><strong>Create Count</strong></span>
+        <button id="newFileBtn" class="image-button" aria-label="New File"></button>
+      </div>
+      <div class="button-row">
+        <span class="button-label clickable-label" id="viewCountsLabel"><strong>View Counts</strong></span>
+        <button id="listPngsBtn" class="image-button" aria-label="List PNGs"></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    window.MODE = urlParams.get("mode") || "Inventory";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.MODE === "Restock") {
+        document.getElementById("restockLink").classList.add("active");
+      } else {
+        document.getElementById("inventoryLink").classList.add("active");
+      }
+
+      const goToCreate = () => {
+        window.location.href = `createCount.html?mode=${window.MODE}`;
+      };
+      const goToView = () => {
+        window.location.href = `viewAllCounts.html?mode=${window.MODE}`;
+      };
+
+      document.getElementById("newFileBtn").onclick = goToCreate;
+      document.getElementById("createCountLabel").onclick = goToCreate;
+
+      document.getElementById("listPngsBtn").onclick = goToView;
+      document.getElementById("viewCountsLabel").onclick = goToView;
+    });
+  </script>
+
+  <script type="module" src="../js/auth.js" defer></script>
+</body>
+</html>

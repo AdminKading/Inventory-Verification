@@ -1,0 +1,267 @@
+body {
+  background-color: #696969;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+/* Navbar styling */
+.navbar {
+  display: flex;
+  justify-content: center;
+  background-color: #505050;
+  padding: 10px 0;
+  border-bottom: 2px solid black;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  margin: 0;
+  border-right: 1px solid black;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.navbar a:last-child {
+  border-right: none;
+}
+
+.navbar a:hover {
+  background-color: #707070;
+  color: #C0C0C0;
+  border-radius: 5px;
+}
+
+.navbar a.active {
+  background-color: #404040;
+  color: #FFD700;
+  font-weight: bold;
+  border-radius: 5px;
+  pointer-events: none;
+}
+.back-button {
+    margin: 15px;
+    padding-left: 15px;
+    padding-bottom: 5px;
+}
+
+.back-button button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    width: 40px; /* width of your icon */
+    height: auto;
+}
+
+.back-button img {
+    width: 30px;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.3s ease;
+    display: block;
+}
+
+.back-button img.hover {
+    opacity: 0;
+}
+
+.back-button button:hover img.hover {
+    opacity: 1;
+}
+
+.back-button button:hover img.normal {
+    opacity: 0;
+}
+
+/* Inventory List Container */
+#inventory-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  padding: 30px 0;
+}
+
+/* Grey bubble section */
+.inventory-section {
+  width: 100%;
+  max-width: 400px;
+  background-color: #505050;
+  padding: 10px 20px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Month header styling */
+.inventory-month {
+  font-size: 1.2em;
+  font-weight: bold;
+  text-decoration: underline;
+  margin-bottom: 5px;
+}
+
+/* File name links */
+.inventory-file {
+  color: #FFD700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s;
+  margin-bottom: 15px;
+}
+
+.inventory-file:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* Download Icon Styling */
+.download-icon {
+  display: inline-block;
+  width: 30px;
+  height: 20px;
+  margin-left: 10px;
+  margin-bottom: 5px;
+  vertical-align: middle;
+  background-image: url('../Images/download.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  transition: background-image 0.3s ease;
+}
+
+.download-icon:hover {
+  background-image: url('../Images/download-gold.png');
+}
+
+/* Sorting and filtering controls */
+#sort-filter-controls {
+  max-width: 400px;
+  margin: 50px auto 10px auto;
+  background-color: #505050;
+  padding: 30px 20px;
+  border-radius: 15px;
+  text-align: center;
+  color: white;
+  font-size: 1rem;
+  display: flex;
+  gap: 12px;
+  justify-content: left;
+  flex-wrap: wrap;
+}
+
+#sort-filter-controls > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#sort-filter-controls label {
+  min-width: 50px;
+  text-align: right;
+}
+
+#sort-filter-controls select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+}
+
+/* Responsive styles for small screens */
+@media only screen and (max-width: 600px) {
+    .navbar {
+        flex-wrap: wrap;
+    }
+
+    .navbar a {
+        flex: 1 1 50%;
+        text-align: center;
+        border-right: none;
+    }
+
+    .navbar a:nth-child(odd) {
+        border-right: 1px solid black;
+    }
+
+    .button-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        max-width: 300px;
+        margin: 20px auto;
+    }
+
+    .button-grid a {
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        background-color: #505050;
+        color: white;
+        border: 1px solid black;
+        text-decoration: none;
+
+        /* Fix uneven spacing */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Add bottom border explicitly for the first row (top buttons) */
+    .button-grid a:nth-child(1),
+    .button-grid a:nth-child(2) {
+        border-bottom: 2px solid black;
+    }
+
+    /* Ensure no bottom border for the bottom row buttons */
+    .button-grid a:nth-child(3),
+    .button-grid a:nth-child(4) {
+        border-bottom: none !important;
+    }
+
+    /* Make .button-container bigger and centered */
+    .button-container {
+        max-width: 320px;
+        width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Make the gray box fill full width */
+    .button-row {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Adjust inventory section */
+    .inventory-section {
+        max-width: 90%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        gap: 6px;
+    }
+
+    /* Make sort-filter-controls match inventory-section */
+    #sort-filter-controls {
+        max-width: 90%;
+        width: 100%;
+        margin: 20px auto;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+    }
+    .back-button {
+      margin-bottom: 45px; /* or whatever size you want */
+    }
+}

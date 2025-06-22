@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>View Inventory Count</title>
+
+  <link rel="stylesheet" href="../css/viewCount.css" />
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+  <div id="main-content">
+    <nav class="navbar">
+      <a href="./home.html">Home</a>
+      <a href="./currentinventory.html">System Inventory</a>
+      <a id="inventoryLink" href="./count.html?mode=Inventory">Inventory Count</a>
+      <a id="restockLink" href="./count.html?mode=Restock">Restock Count</a>
+    </nav>
+    <div class="back-button">
+      <button onclick="history.back()">
+        <img class="normal" src="../Images/back.png" alt="Back" />
+        <img class="hover" src="../Images/back-gold.png" alt="Back" />
+      </button>
+    </div>
+  </div>
+
+  <div id="inventory-container">
+    <!-- Read-only table will be inserted here -->
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    window.MODE = urlParams.get("mode") || "Inventory";
+    window.READ_ONLY = true;
+
+    // Set active class based on mode
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.MODE === "Restock") {
+        document.getElementById("restockLink").classList.add("active");
+      } else {
+        document.getElementById("inventoryLink").classList.add("active");
+      }
+    });
+  </script>
+
+  <script type="module" src="../js/auth.js" defer></script>
+  <script type="module" src="../js/renderInventoryFile.js"></script>
+</body>
+</html>

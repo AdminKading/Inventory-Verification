@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inventory Count</title>
+
+  <link rel="stylesheet" href="../css/viewAllCounts.css" />
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+  <div id="main-content">
+    <nav class="navbar">
+      <a href="./home.html">Home</a>
+      <a href="./currentinventory.html">System Inventory</a>
+      <a id="inventoryLink" href="./count.html?mode=Inventory">Inventory Count</a>
+      <a id="restockLink" href="./count.html?mode=Restock">Restock Count</a>
+    </nav>
+    <div class="back-button">
+      <button onclick="history.back()">
+        <img class="normal" src="../Images/back.png" alt="Back" />
+        <img class="hover" src="../Images/back-gold.png" alt="Back" />
+      </button>
+    </div>
+    <!-- Sorting and filtering controls -->
+    <div id="sort-filter-controls">
+      <div>
+        <label for="sort-select">Sort by:</label>
+        <select id="sort-select">
+          <option value="desc" selected>Latest First (Descending)</option>
+          <option value="asc">Oldest First (Ascending)</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="month-select">Month:</label>
+        <select id="month-select">
+          <option value="All" selected>All</option>
+          <option value="January">January</option>
+          <option value="February">February</option>
+          <option value="March">March</option>
+          <option value="April">April</option>
+          <option value="May">May</option>
+          <option value="June">June</option>
+          <option value="July">July</option>
+          <option value="August">August</option>
+          <option value="September">September</option>
+          <option value="October">October</option>
+          <option value="November">November</option>
+          <option value="December">December</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="year-select">Year:</label>
+        <select id="year-select">
+          <option value="All" selected>All</option>
+          <!-- Years populated dynamically -->
+        </select>
+      </div>
+    </div>
+
+    <div id="inventory-list">Loading...</div>
+  </div>
+
+  <script>
+    // Get mode from URL query string
+    const urlParams = new URLSearchParams(window.location.search);
+    window.MODE = urlParams.get("mode") || "Inventory";
+
+    // Set active class on navbar links
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.MODE === "Restock") {
+        document.getElementById("restockLink").classList.add("active");
+      } else {
+        document.getElementById("inventoryLink").classList.add("active");
+      }
+
+    });
+  </script>
+
+  <!-- Your auth script if needed -->
+  <script type="module" src="../js/auth.js" defer></script>
+
+  <!-- Your inventory listing script -->
+  <script src="../js/listInventoryFiles.js" defer></script>
+</body>
+</html>

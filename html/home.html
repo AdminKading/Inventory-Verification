@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Home</title>
+    <link rel="stylesheet" href="../css/home.css" />
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div id="main-content"> 
+        <nav class="navbar">
+            <a href="./home.html" class="active">Home</a>
+            <a href="./currentinventory.html">System Inventory</a>
+            <a href="./count.html?mode=Inventory">Inventory Count</a>
+            <a href="./count.html?mode=Restock">Restock Count</a>
+
+        </nav>
+        <div class="content">
+            <p>
+                Click <strong>System Inventory</strong> to view the system inventory sourced from AppFolio.
+            </p>
+            <p>
+                Click <strong>Inventory Count</strong> to allow manual inventory count or to view previous counts.
+            </p>
+            <p>
+                Click <strong>Restock Count</strong> to allow restock count or to view previous counts.
+            </p>
+        </div>
+        <h2></h2>
+        <a href="../index.html" id="exit">SHOP</a>
+    </div>
+    
+
+    <!-- Load home.js as a module to allow ES6 imports -->
+    <script type="module" src="../js/auth.js" defer></script>
+    <script type="module" src="../js/home.js"></script>
+</body>
+</html>

@@ -82,35 +82,40 @@ button:active {
 @media only screen and (max-width: 600px) {
     body {
         flex-direction: column;
-        padding: 0;
+        padding: 10px;           /* add some padding inside edges */
         height: auto;
         min-height: 100vh;
-        overflow-y: auto; /* Ensure scrolling on smaller devices */
+        overflow-y: auto;
+        align-items: center;     /* center all content horizontally */
+        justify-content: flex-start;
+        text-align: center;      /* center text */
     }
 
     .container {
-        width: 90%;
-        max-width: 300px;
+        width: 95%;              /* almost full width with a bit margin */
+        max-width: 350px;        /* max size so it doesn't get too wide */
+        margin: 20px auto;       /* vertical margin + center horizontally */
     }
 
     #kading {
-        display: block;
-        margin: 0 auto; /* Center the image horizontally */
+        margin: 20px auto 30px;  /* top and bottom margin for spacing */
         max-width: 100%;
-        height: auto; /* Maintain aspect ratio */
-        margin-bottom: 20px; /* Add space below the image */
-        transition: transform 0.3s ease, filter 0.3s ease; /* Smooth transition for hover effects */
+        height: auto;
     }
 
     h2 {
-        font-size: 20px;
+        font-size: 22px;
         margin-top: 0;
+        margin-bottom: 20px;
     }
 
     button {
-        font-size: 14px;
-        padding: 8px 10px;
+        font-size: 16px;
+        padding: 12px 15px;
         width: 100%;
-        margin: 8px 0;
+        max-width: 350px;        /* keep button width consistent with container */
+        margin: 10px auto;       /* center buttons with vertical spacing */
+        display: block;
+        box-sizing: border-box;
     }
 }

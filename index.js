@@ -27,7 +27,7 @@ document.querySelectorAll('.container button').forEach(button => {
 
                 // Save the data to localStorage and redirect
                 localStorage.setItem('excelData', JSON.stringify(jsonData));
-                window.location.href = 'Home/home.html';
+                window.location.href = 'html/home.html';
             } catch (error) {
                 console.error(error);
                 alert(`Error loading file: ${error.message}`);
