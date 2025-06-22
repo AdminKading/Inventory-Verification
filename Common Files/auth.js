@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const validPasswords = ["adminpassword", "clientpassword"];
+  const validPasswords = ["adimpassword", "clientpassword"];
   const savedPassword = getCookie("userpass");
 
   console.log("DOMContentLoaded fired");
