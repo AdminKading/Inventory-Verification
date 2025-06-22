@@ -1,11 +1,24 @@
 import { getCookie, setCookie } from './data.js';
 
-export function createInventoryTable(rows, onManualUpdate = null, readOnly = false, cookiePrefix = '') {
+export function createInventoryTable(
+  rows,
+  onManualUpdate = null,
+  readOnly = false,
+  cookiePrefix = '',
+  showQtyOnHand = true,
+  showExtras = true  // controls if cost, difference, total value difference columns show
+) {
   const table = document.createElement('table');
   table.border = '1';
 
+  // Define headers based on flags
   const headerRow = document.createElement('tr');
-  ['NAME', 'QUANTITY ON HAND', 'MANUAL QUANTITY'].forEach(h => {
+  const headers = ['NAME'];
+  if (showQtyOnHand) headers.push('QUANTITY ON HAND');
+  headers.push('MANUAL QUANTITY');
+  if (showExtras) headers.push('COST', 'DIFFERENCE', 'TOTAL VALUE DIFFERENCE');
+
+  headers.forEach(h => {
     const th = document.createElement('th');
     th.textContent = h;
     th.style.padding = '10px';
@@ -15,27 +28,49 @@ export function createInventoryTable(rows, onManualUpdate = null, readOnly = fal
   table.appendChild(headerRow);
 
   const tableRows = [];
+  let totalValueDifference = 0;
 
   rows.forEach((row, index) => {
     const tr = document.createElement('tr');
-
     const nameRaw = row["__EMPTY"] ?? row["NAME"] ?? '';
     const qtyRaw = row["__EMPTY_9"] ?? row["QUANTITY ON HAND"];
+    const costRaw = row["__EMPTY_3"] ?? row["COST"];
+
     const name = nameRaw.toString().trim();
     const qty = (qtyRaw === undefined || qtyRaw === '') ? 0 : parseFloat(qtyRaw) || 0;
+    const cost = (costRaw === undefined || costRaw === '') ? 0 : parseFloat(costRaw) || 0;
 
     let manualValue = 0;
     if (readOnly) {
       const raw = row["MANUAL QUANTITY"];
       manualValue = raw === undefined || raw === '' || isNaN(raw) ? 0 : parseFloat(raw);
     } else {
-      // Read cookie here to initialize input
       const cookieVal = getCookie(cookiePrefix + name);
       manualValue = cookieVal === undefined || cookieVal === '' || isNaN(cookieVal)
         ? 0
         : parseFloat(cookieVal);
     }
 
+    const difference = manualValue - qty;
+    const totalValueDiff = difference * cost;
+    totalValueDifference += totalValueDiff;
+
+    // NAME cell
+    const nameTd = document.createElement('td');
+    nameTd.textContent = name;
+    nameTd.style.padding = '10px';
+    tr.appendChild(nameTd);
+
+    // QUANTITY ON HAND cell (conditional)
+    if (showQtyOnHand) {
+      const qtyTd = document.createElement('td');
+      qtyTd.textContent = qty;
+      qtyTd.style.padding = '10px';
+      qtyTd.style.textAlign = 'center';
+      tr.appendChild(qtyTd);
+    }
+
+    // MANUAL QUANTITY cell
     const manualTd = document.createElement('td');
     manualTd.style.padding = '10px';
 
@@ -48,36 +83,77 @@ export function createInventoryTable(rows, onManualUpdate = null, readOnly = fal
       input.value = manualValue;
       input.id = `manual-${index}`;
 
-      // Set cookie on user input change here only, expires in 2 hours
       input.addEventListener('input', (e) => {
         const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
-        setCookie(cookiePrefix + name, value, 2); // 2 hours expiry
+        setCookie(cookiePrefix + name, value, 2);
         onManualUpdate?.(index, value);
       });
 
       manualTd.appendChild(input);
     }
-
-    const nameTd = document.createElement('td');
-    nameTd.textContent = name;
-    nameTd.style.padding = '10px';
-
-    const qtyTd = document.createElement('td');
-    qtyTd.textContent = qty;
-    qtyTd.style.padding = '10px';
-    qtyTd.style.textAlign = 'center';
-
-    tr.appendChild(nameTd);
-    tr.appendChild(qtyTd);
     tr.appendChild(manualTd);
+
+    // Extras columns (cost, difference, total value difference)
+    if (showExtras) {
+      const costTd = document.createElement('td');
+      costTd.textContent = cost.toFixed(2);
+      costTd.style.padding = '10px';
+      costTd.style.textAlign = 'center';
+
+      const diffTd = document.createElement('td');
+      diffTd.textContent = difference.toFixed(2);
+      diffTd.style.padding = '10px';
+      diffTd.style.textAlign = 'center';
+
+      const totalValTd = document.createElement('td');
+      totalValTd.textContent = totalValueDiff.toFixed(2);
+      totalValTd.style.padding = '10px';
+      totalValTd.style.textAlign = 'center';
+
+      tr.appendChild(costTd);
+      tr.appendChild(diffTd);
+      tr.appendChild(totalValTd);
+    }
+
     table.appendChild(tr);
 
-    tableRows.push({
+    // Build row object for export
+    const rowObj = {
       NAME: name,
-      'QUANTITY ON HAND': qty,
-      'MANUAL QUANTITY': manualValue
-    });
+      ...(showQtyOnHand ? { 'QUANTITY ON HAND': qty } : {}),
+      'MANUAL QUANTITY': manualValue,
+    };
+
+    if (showExtras) {
+      rowObj['COST'] = cost;
+      rowObj['DIFFERENCE'] = difference;
+      rowObj['TOTAL VALUE DIFFERENCE'] = totalValueDiff;
+    }
+
+    tableRows.push(rowObj);
   });
+
+  // Append total row if extras shown
+  if (showExtras) {
+    const totalRow = document.createElement('tr');
+
+    for (let i = 0; i < headers.length - 1; i++) {
+      const td = document.createElement('td');
+      td.textContent = '';
+      td.style.padding = '10px';
+      totalRow.appendChild(td);
+    }
+
+    const totalTd = document.createElement('td');
+    totalTd.textContent = `Total: ${totalValueDifference.toFixed(2)}`;
+    totalTd.style.fontWeight = 'bold';
+    totalTd.style.textAlign = 'center';
+    totalTd.style.padding = '10px';
+    totalTd.style.backgroundColor = '#f0f0f0';
+    totalRow.appendChild(totalTd);
+
+    table.appendChild(totalRow);
+  }
 
   return { table, tableRows };
 }
