@@ -1,14 +1,17 @@
 // Shop buttons for loading Excel from Google Drive (exclude upload buttons)
 document.querySelectorAll('.container button[data-shop]:not(.upload-btn)').forEach(button => {
   button.addEventListener('click', async (event) => {
-    const shopName = event.target.getAttribute('data-shop');
+    let shopName = event.target.getAttribute('data-shop');
     if (!shopName) {
       alert('Error: Shop name not found.');
       return;
     }
 
+    // Replace spaces with underscores for the file fetch
+    const fileShopName = shopName.replace(/\s+/g, '_');
+
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVpNVILkwnbN3ajlUPFSUSITudIIsL83CHgIRJh6TEOc6rI53qj7h4jtaPRLrfCbfteA/exec';
-    const fileParam = encodeURIComponent(shopName + '.xlsx');
+    const fileParam = encodeURIComponent(fileShopName + '.xlsx');
     const url = `${APPS_SCRIPT_URL}?filename=${fileParam}&mode=main&callback=handleShopExcel`;
 
     window.handleShopExcel = (response) => {
@@ -30,7 +33,7 @@ document.querySelectorAll('.container button[data-shop]:not(.upload-btn)').forEa
         console.log('Excel Data:', jsonData);
 
         localStorage.setItem('excelData', JSON.stringify(jsonData));
-        localStorage.setItem('shopFile', shopName + '.xlsx');
+        localStorage.setItem('shopFile', fileShopName + '.xlsx');
 
         window.location.href = 'html/home.html';
       } catch (err) {
@@ -51,7 +54,6 @@ document.querySelectorAll('.container button[data-shop]:not(.upload-btn)').forEa
 const fileInput = document.getElementById('file-input');
 
 document.querySelectorAll('.upload-btn').forEach(uploadBtn => {
-  // Only show if admin
   if (window.hasAdminAccess && window.hasAdminAccess()) {
     uploadBtn.style.display = 'inline-block';
   }
@@ -59,7 +61,7 @@ document.querySelectorAll('.upload-btn').forEach(uploadBtn => {
   uploadBtn.addEventListener('click', () => {
     const shopName = uploadBtn.getAttribute('data-shop');
     console.log(`Upload clicked for ${shopName}`);
-    fileInput.value = ''; // Reset file input
+    fileInput.value = '';
     fileInput.click();
 
     fileInput.onchange = async (event) => {
@@ -82,12 +84,10 @@ document.querySelectorAll('.upload-btn').forEach(uploadBtn => {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: `shopName=${encodeURIComponent(shopName)}&uploadType=shop&contents=${encodeURIComponent(base64Contents)}`
         });
-        // Ignore fetch errors from CORS
       } catch (err) {
         console.warn('Fetch may fail due to CORS, ignoring in UI', err);
       }
 
-      // Always show success message to user
       console.log(`Upload request sent for ${shopName}`);
       alert(`File uploaded for ${shopName}`);
     };
