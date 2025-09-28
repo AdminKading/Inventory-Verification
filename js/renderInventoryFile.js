@@ -1,6 +1,6 @@
 import { createInventoryTable } from './ui.js';
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8TC52oIfNt5pVyph38i8kfomJsqpg9fLwxahcnsdQJDyIywg_e08yjmwRRCRrBk2wBA/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWgtaZtLFOfilCwINuA8rCMscKlT7Nxu7MtfSw4BPmRRJq2P54_HreJuxf1vagZhTu7w/exec';
 
 function getQueryParam(param) {
   const value = new URLSearchParams(window.location.search).get(param);

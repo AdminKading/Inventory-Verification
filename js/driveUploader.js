@@ -10,7 +10,7 @@ export function sendToGoogleDrive(blob, shopName, mode) {
       formData.append('mode', mode); // ✅ Folder key
       formData.append('contents', base64Data);
 
-      fetch('https://script.google.com/macros/s/AKfycby8TC52oIfNt5pVyph38i8kfomJsqpg9fLwxahcnsdQJDyIywg_e08yjmwRRCRrBk2wBA/exec', {
+      fetch('https://script.google.com/macros/s/AKfycbxKYky_aPAF-kzB8lHlBUAM6DbSV7wKSGXsD1052XYQM1j6RdeNr4HPO9d7SGexYnjc7w/exec', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'

@@ -10,7 +10,6 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      /* NOTE: visibility is now controlled by auth.js only */
     }
     .version-label {
       position: absolute;
@@ -24,25 +23,69 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
+    .shop-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .shop-row button {
+      margin-right: 10px;
+    }
+    .upload-btn {
+      width: 32px;
+      height: 32px;
+      background: url('Images/upload.png') no-repeat center center;
+      background-size: contain;
+      border: none;
+      cursor: pointer;
+      display: none; /* hide by default */
+    }
+    .upload-btn:hover {
+      background: url('Images/upload-gold.png') no-repeat center center;
+      background-size: contain;
+    }
   </style>
-  <script type="module" src="../js/auth.js" defer></script>
-  <script src="index.js" defer></script> <!-- Your shop logic -->
 </head>
 <body>
   <div id="main-content"> 
     <div class="version-label">v1.09</div>
     <input type="file" id="file-input" accept=".xlsx, .xls" style="display: none;" />
+
     <div class="container">
       <img id="kading" src="Images/kading.png" alt="kading" />
-      <button id="adel-button" data-shop="Adel">Adel</button>
-      <button id="osceola-button" data-shop="Osceola">Osceola</button>
-      <button id="madrid-button" data-shop="Madrid">Madrid</button>
-      <button id="newton-button" data-shop="Newton">Newton</button>
-      <button id="south-des-moines-button" data-shop="South Des Moines">South Des Moines</button>
-      <button id="storm-lake-button" data-shop="Storm Lake">Storm Lake</button>
-      <button id="urbandale-button" data-shop="Urbandale">Urbandale</button>
+
+      <div class="shop-row">
+        <button data-shop="Adel">Adel</button>
+        <button class="upload-btn" data-shop="Adel"></button>
+      </div>
+      <div class="shop-row">
+        <button data-shop="Osceola">Osceola</button>
+        <button class="upload-btn" data-shop="Osceola"></button>
+      </div>
+      <div class="shop-row">
+        <button data-shop="Madrid">Madrid</button>
+        <button class="upload-btn" data-shop="Madrid"></button>
+      </div>
+      <div class="shop-row">
+        <button data-shop="Newton">Newton</button>
+        <button class="upload-btn" data-shop="Newton"></button>
+      </div>
+      <div class="shop-row">
+        <button data-shop="South Des Moines">South Des Moines</button>
+        <button class="upload-btn" data-shop="South Des Moines"></button>
+      </div>
+      <div class="shop-row">
+        <button data-shop="Storm Lake">Storm Lake</button>
+        <button class="upload-btn" data-shop="Storm Lake"></button>
+      </div>
+      <div class="shop-row">
+        <button data-shop="Urbandale">Urbandale</button>
+        <button class="upload-btn" data-shop="Urbandale"></button>
+      </div>
     </div>
   </div>
-<script type="module" src="../js/auth.js" defer></script>
+
+  <script type="module" src="../js/auth.js" defer></script>
+  <script src="index.js" defer></script>
 </body>
 </html>

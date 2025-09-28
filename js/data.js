@@ -1,12 +1,75 @@
 // Holds the loaded Excel data for access by getExcelData()
 let cachedExcelData = null;
 
+// Your Apps Script endpoint for the SHOPS folder
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVpNVILkwnbN3ajlUPFSUSITudIIsL83CHgIRJh6TEOc6rI53qj7h4jtaPRLrfCbfteA/exec';
+
 /**
- * Sets the Excel JSON data (e.g., from JSONP or localStorage)
+ * Fetches Excel JSON data from SHOPS folder via Apps Script JSONP.
+ * Caches it for repeated calls.
+ * @param {string} filename - the file in SHOPS folder
+ */
+export const fetchExcelDataFromShops = (filename) => {
+    return new Promise((resolve, reject) => {
+        if (cachedExcelData) {
+            console.log('[data.js] Returning cached data');
+            return resolve(cachedExcelData);
+        }
+
+        console.log(`[data.js] fetchExcelDataFromShops called with filename: ${filename}`);
+
+        // Create unique callback name
+        const callbackName = `handleShopExcel_${Date.now()}`;
+        window[callbackName] = (response) => {
+            console.log('[data.js] JSONP callback triggered', response);
+
+            try {
+                if (response.error) {
+                    console.error('[data.js] Error from Apps Script:', response.error);
+                    resolve(null);
+                } else {
+                    // Decode base64 Excel
+                    if (response.base64) {
+                        const bytes = Uint8Array.from(atob(response.base64), c => c.charCodeAt(0));
+                        const workbook = XLSX.read(bytes, { type: 'array' });
+                        const sheetName = workbook.SheetNames[0];
+                        const sheet = workbook.Sheets[sheetName];
+                        cachedExcelData = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+                    } else if (response.data) {
+                        cachedExcelData = response.data;
+                    } else {
+                        cachedExcelData = null;
+                    }
+                    resolve(cachedExcelData);
+                }
+            } catch (err) {
+                console.error('[data.js] Failed to parse Excel data:', err);
+                resolve(null);
+            } finally {
+                // Clean up
+                delete window[callbackName];
+                script.remove();
+            }
+        };
+
+        // Construct URL with JSONP callback
+        const url = `${APPS_SCRIPT_URL}?filename=${encodeURIComponent(filename)}&mode=main&callback=${callbackName}`;
+        console.log('[data.js] Fetching URL:', url);
+
+        // Inject script tag to perform JSONP request
+        const script = document.createElement('script');
+        script.src = url;
+        document.body.appendChild(script);
+    });
+};
+
+/**
+ * Sets the Excel JSON data manually
  * @param {Array|Object} data 
  */
 export const setExcelData = (data) => {
     cachedExcelData = data;
+    localStorage.setItem('excelData', JSON.stringify(data));
 };
 
 /**
@@ -21,25 +84,15 @@ export const getExcelData = () => {
 
 /**
  * Sets a cookie with a specific key, value, and expiry in hours
- * @param {string} key 
- * @param {string|number} value 
- * @param {number} hours 
  */
 export const setCookie = (key, value, hours) => {
-    if (!key.startsWith('InventoryCount_') && !key.startsWith('RestockCount_') &&
-        key !== 'userpass' && key !== 'authToken') {
-        console.warn(`Warning: setCookie called with unprefixed key: "${key}"`);
-    }
     const date = new Date();
-    date.setTime(date.getTime() + hours * 60 * 60 * 1000); // convert hours to ms
+    date.setTime(date.getTime() + hours * 60 * 60 * 1000);
     document.cookie = `${key}=${value};expires=${date.toUTCString()};path=/`;
 };
 
-
 /**
- * Gets the value of a cookie by key
- * @param {string} key 
- * @returns {string|null}
+ * Gets a cookie value
  */
 export const getCookie = (key) => {
     const cookies = document.cookie.split(';');
@@ -51,9 +104,7 @@ export const getCookie = (key) => {
 };
 
 /**
- * Clear cookies selectively based on mode.
- * Keeps 'userpass' and 'authToken' untouched.
- * @param {string} mode e.g. 'Inventory' or 'Restock'
+ * Clears cookies for a specific mode
  */
 export const clearCookies = (mode) => {
     const prefix = mode + "Count_";
@@ -61,17 +112,13 @@ export const clearCookies = (mode) => {
         const name = cookie.split('=')[0].trim();
         if (name === "userpass" || name === "authToken") return;
         if (name.startsWith(prefix)) {
-            // Expire cookie immediately
             document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
         }
     });
 };
 
 /**
- * Extracts the shop name from the loaded data, defaulting if missing.
- * Replaces spaces with underscores.
- * @param {Array} data 
- * @returns {string}
+ * Extracts the shop name from loaded data
  */
 export const extractShopName = (data) => {
     if (!data || !Array.isArray(data)) return 'Unknown_Shop';

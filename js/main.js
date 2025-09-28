@@ -1,14 +1,24 @@
-import { getExcelData, clearCookies, extractShopName } from './data.js';
+import { getExcelData, fetchExcelDataFromShops, clearCookies, extractShopName } from './data.js';
 import { filterValidRows } from './logic.js';
 import { createInventoryTable } from './ui.js';
 import { exportToExcel } from './exporter.js';
 import { sendToGoogleDrive } from './driveUploader.js';
 
-window.onload = () => {
+window.onload = async () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const mode = urlParams.get("mode") || 'Inventory';
+  const mode = urlParams.get("mode") || 'Count';
 
-  const data = getExcelData();
+  // 1️⃣ First try to get the shop file from localStorage (set by index.js)
+  let fileName = localStorage.getItem('shopFile');
+  // 2️⃣ If not in localStorage, fallback to URL parameter or default
+  if (!fileName) {
+    fileName = urlParams.get("file") || 'shopfile.xlsx';
+  }
+
+  console.log('Fetching Excel file:', fileName);
+
+  // Fetch Excel data from SHOPS folder
+  const data = await fetchExcelDataFromShops(fileName);
   if (!data) {
     document.getElementById('inventory-container').innerText = 'No data found.';
     return;
@@ -18,8 +28,7 @@ window.onload = () => {
   const container = document.getElementById('inventory-container');
   const tableState = { rows: [] };
 
-  const prefix = mode === 'Inventory' ? 'InventoryCount_' : mode + 'Count_';
-
+  const prefix = mode + 'Count_';
   const showQtyOnHand = false;
   const showExtras = false;
 
@@ -73,28 +82,12 @@ window.onload = () => {
     });
 
     const hasMissing = exportRows.some(row => row['MANUAL QUANTITY'] === -1);
-
     if (hasMissing) {
       const confirmFill = confirm('One or more manual quantities are missing or invalid. These entries will not be counted toward the totals. Do you want to proceed anyway?');
       if (!confirmFill) return;
     }
 
-    // Remove the helper _costUnit before export
     const cleanedRows = exportRows.map(({ _costUnit, ...rest }) => rest);
-
-    if (mode === 'Inventory') {
-      const totalRow = {
-        NAME: '',
-        'SYSTEM QUANTITY': '',
-        'MANUAL QUANTITY': '',
-        'SYSTEM COST': '',
-        'MANUAL COST': '',
-        'QUANTITY DIFFERENCE': '',
-        'COST DIFFERENCE': `Total: ${totalCostDiff.toFixed(2)}`
-      };
-      cleanedRows.push(totalRow);
-    }
-
     const blob = exportToExcel(cleanedRows, shopName, mode, true);
 
     sendToGoogleDrive(blob, shopName, mode)
